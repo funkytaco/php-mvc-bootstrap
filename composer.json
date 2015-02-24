@@ -1,6 +1,6 @@
 {
-    "name": "php-noframework-seed",
-    "description": "A 'no framework' PHP template to seed your application.",
+    "name": "php-seed-bootstrap",
+    "description": "A 'no framework' MVC PHP scaffold to seed a Bootstrap-enabled application.",
     "keywords": ["template", "seed"],
     "license": "MIT",
     "authors": [
