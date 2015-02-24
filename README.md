@@ -2,6 +2,8 @@
 
 A 'no framework' MVC PHP 5.4 scaffold to seed a Bootstrap-enabled application utilizing Composer and namespaces.
 
+[![Build Status](https://secure.travis-ci.org/funkytaco/php-seed-bootstrap.png?branch=master)](http://travis-ci.org/funkytaco/php-seed-bootstrap)
+
 ## Components
 
 Components
