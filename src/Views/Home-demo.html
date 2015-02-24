@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{appName}} - Home</title>
+    {{> partials/header}}
+    {{> partials/header-dashboard}}
+    </head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">{{appName}}</a>
+        </div>
+        <div class="nav navbar-nav">
+
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>test</li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            {{{demo_menu}}}
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1>PHP Template Seed Project</h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        <h3 class="panel-title">php-seed-bootstrap - Installation Tests</h3>
+        </div>
+        <div class="panel-body">
+        {{{installation_status}}}
+        {{{bootstrap_lint}}}
+        <p>Server Time from template variables: <code>{{today}}, {{time}}</code></p>
+
+        <h4>Data from a Mock Database class</h4>
+        <ul>
+        {{#users}}
+        <li>{{name}}</li>
+        {{/users}}
+        </ul>
+        <p>This data was rendered by Mustache for PHP.</p>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        <h3 class="panel-title">About php-seed-bootstrap</h3>
+        </div>
+        <div class="panel-body">
+        <p class="blog-post-meta">{{month}} {{day}}, {{year}} by <a href="http://github.com/funkytaco">Luis Gonzalez</a></p>
+            <h4>Components</h4>
+        <ul>
+            <li><a href="https://github.com/twbs/bootstrap">Bootstrap</a> for front-end development</li>
+            <li><a href="https://getcomposer.org/">Composer</a> for dependency management and project setup</li>
+            <li><a href="https://github.com/filp/whoops">whoops</a> for error handling</li>
+            <li><a href="https://github.com/chriso/klein.php">Klein</a> for routing</li>
+            <li><a href="https://github.com/mustache/mustache">mustache</a> for templating</li>
+            <li><a href="https://github.com/rdlowrey/Auryn">Auryn</a> for dependency injection</li>
+        </ul>
+            <p>If you read through the <a href="https://github.com/PatrickLouys/no-framework-tutorial">No Framework tutorial</a>, you can learn how to replace the router (Klein), the template engine (Mustache), the error handler, or the dependency injector (Auryn).</p>
+
+        <h4>Where does everything go?</h4>
+
+        <pre><code class="language-bash" data-lang="bash">
+phptemplate/
+├── optional
+│   └── themes (3rd party themes I didn't install into the app structure)
+├── public/ (your public web folder)
+│   ├── assets/ (css, js, et cetera)
+│   └── index.php (app entry point)
+└── src
+    ├── Mocks/
+    ├── Renderer/ (templating engine files)
+    ├── Traits/ (php 5.4 traits)
+    ├── Controllers/
+    ├── Static/ (your static error page is in this directory)
+    ├── Bootstrap.php (setup your project)
+    ├── Dependencies.php (for dependency injection)
+    ├── Routes.php (setup your URI endpoints/routes)
+    └── Views
+        └── Partials (templating include files)
+        </code></pre>
+
+        <div class="alert alert-info" role="alert">
+        <strong>Note:</strong> Please make sure to read README.md for further details.
+        </div>
+
+
+        </div>
+    </div>
+
+    <!-- begin bootstrap demo //-->
+    {{> partials/body-test-bootstrap}}
+    <!-- end bootstrap demo //-->
+
+            </div>
+        </div>
+    </div>
+
+<!-- begin footer includes //-->
+{{> partials/footer-includes}}
+<!-- end footer includes //-->
+  </body>
+</html>
+
+
+   
