@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>php-seed-bootstrap by funkytaco</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>php-seed-bootstrap</h1>
+        <p>A &#39;no framework&#39; MVC PHP 5.4 scaffold to seed a Bootstrap-enabled application utilizing Composer and namespaces.</p>
+        <p class="view"><a href="https://github.com/funkytaco/php-seed-bootstrap">View the Project on GitHub <small>funkytaco/php-seed-bootstrap</small></a></p>
+        <ul>
+          <li><a href="https://github.com/funkytaco/php-seed-bootstrap/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/funkytaco/php-seed-bootstrap/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/funkytaco/php-seed-bootstrap">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="php-seed-bootstrap" class="anchor" href="#php-seed-bootstrap" aria-hidden="true"><span class="octicon octicon-link"></span></a>php-seed-bootstrap</h1>
+
+<p>A 'no framework' MVC PHP 5.4 scaffold to seed a Bootstrap-enabled application utilizing Composer and namespaces.</p>
+
+<p><a href="http://travis-ci.org/funkytaco/php-seed-bootstrap"><img src="https://secure.travis-ci.org/funkytaco/php-seed-bootstrap.png?branch=master" alt="Build Status"></a></p>
+
+<h2>
+<a id="components" class="anchor" href="#components" aria-hidden="true"><span class="octicon octicon-link"></span></a>Components</h2>
+
+<p>Components</p>
+
+<ul>
+<li>
+<a href="http://www.getbootstrap.com/">Bootstrap</a> for front-end development</li>
+<li>
+<a href="https://getcomposer.org/">Composer</a> for dependency management and project setup (i.e. post installation script events)</li>
+<li>
+<a href="https://github.com/filp/whoops/">whoops</a> for error handling</li>
+<li>
+<a href="https://github.com/chriso/klein.php/">Klein.php</a> for routing</li>
+<li>
+<a href="https://github.com/bobthecow/mustache.php">mustache.php</a> for templating</li>
+<li>
+<a href="https://github.com/rdlowrey/Auryn/">Auryn</a> for IoC dependency injection</li>
+</ul>
+
+<p>If you read through <a href="https://github.com/PatrickLouys/no-framework-tutorial/">No Framework</a> for PHP, you can see how to change out these components for others (i.e. replace <a href="https://github.com/bobthecow/mustache.php">mustache.php</a> with <a href="https://github.com/XaminProject/handlebars.php/">handlebars.php</a>)</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-sh"><pre>$ composer install</pre></div>
+
+<p>This will install the necessary vendor components and run some post-update scripts to copy <a href="http://www.getbootstrap.com/">Bootstrap</a> assets to the public folder.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To run a development server on localhost port 8000:</p>
+
+<div class="highlight highlight-sh"><pre>$ composer serve</pre></div>
+
+<p>The port can be changed in DevTasks.php, which is a Composer scripts PHP file.</p>
+
+<h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>To create your own view:</p>
+
+<ul>
+<li>add a route in src/Routes.php</li>
+<li>add a template view in src/Views/</li>
+<li>add a controller in src/Controllers/</li>
+</ul>
+
+<h3>
+<a id="database-pdo-setup" class="anchor" href="#database-pdo-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Database PDO Setup</h3>
+
+<p>By default, the project is using a Mock Database wrapper.</p>
+
+<p>To use a MySQL/Postgres Database:</p>
+
+<ul>
+<li>add your query functions in <code>src/Traits/QueryData.php</code> (I will explain how to use these functions in your view)</li>
+<li>In <em>src/Bootstrap.php</em>:
+
+<ul>
+<li>uncomment <code>include('Database/PDOWrapper.php');</code>
+</li>
+</ul>
+</li>
+<li>In your controller:
+
+<ul>
+<li>uncomment <code>use \Main\Database\PDOWrapper;</code>
+</li>
+</ul>
+</li>
+<li>In <em>src/Database/PDOWrapper.php</em>:
+
+<ul>
+<li>For MySQL: uncomment <code>use \Main\Traits\DB\MySQL;</code>
+</li>
+<li>For PostGreSQL: uncomment <code>use \Main\Traits\DB\PostgreSQL;</code>
+</li>
+<li>Make sure you comment out the one you do not use, including the mock.
+If you run into problems, the error handler should tell you what you've missed.</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="using-database-results-in-your-view" class="anchor" href="#using-database-results-in-your-view" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Database results in your view</h2>
+
+<h3>
+<a id="but-first-understanding-php-traits" class="anchor" href="#but-first-understanding-php-traits" aria-hidden="true"><span class="octicon octicon-link"></span></a>But First... Understanding PHP Traits</h3>
+
+<p>Lets look at our PDO Wrapper class:</p>
+
+<pre><code>&lt;?php
+namespace Main\Database;
+
+class PDOWrapper {
+    use \Main\Traits\DB\MySQL;
+    //use \Main\Traits\DB\PostgreSQL;
+    use \Main\Traits\QueryData;
+}
+</code></pre>
+
+<p>Where is all of our code?? In the <strong>PHP Traits</strong> file, <code>src/Main/Traits/QueryData.php</code>. <strong>PHP Traits</strong> are like interface files, but they allow implementation but you don't <code>extend</code> the class, you just <code>use</code> the Traits file, which includes them as if they were an include file. Note also, how we can swap between MySQL/PostgreSQL without much work, either! </p>
+
+<p><strong>Adding some code to get one database user</strong></p>
+
+<p>In the <strong>src/Traits/MyQueryData.php</strong> Traits file - which we <code>use</code> in the PDOWrapper class - we are going to add a function to select one user from the database. Once this function is added, the PDOWrapper class will be able to use <code>$this-&gt;getFirstUser()</code>, as if the function was a part of the class.</p>
+
+<p>If you are new to <strong>PHP Traits</strong> it works like this:</p>
+
+<ul>
+<li>The PDOWrapper class <code>uses</code> the namespace of your Trait file, e.g., 
+<code>use \Main\Traits\MyQueryData</code>. Since this class is now loaded in the class all of its functions are available to the parent class. Cool, huh?</li>
+</ul>
+
+<p>We use PHP Traits file to keep the code out of our PDOWrapper class. In this way, we can re-use the query functions in MySQL/PostgreSQL by just commenting out a line or two. </p>
+
+<p><strong>Let's get to it!</strong></p>
+
+<p>Open <code>src/Traits/MyQueryData.php</code> and add this function:</p>
+
+<pre><code>    public function getFirstUser() {
+        $users = [];
+        function prepUserForMustache($user) { return array('name' =&gt; $user); }
+
+        $query = $this-&gt;query("SELECT * FROM users LIMIT 1");
+        $rows = $query-&gt;fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $user[]  = prepUserForMustache($row['name']);
+        }
+
+        return $user;
+    }
+</code></pre>
+
+<p>NOTE: If you don't feel like making a <code>users</code> table right now, just put some pseudo code into <code>getFirstUser()</code>; for example, <code>return 'Waldo';</code></p>
+
+<p>In the controller, we are going to add <code>$db-&gt;getFirstUser()</code> as a variable that the templating engine, Mustache, can render in the template.</p>
+
+<p>Open <code>src/Controllers/DemoController.php</code></p>
+
+<ol>
+<li>
+<p>Change this:</p>
+
+<pre><code>//Database Layer example
+$mock_database_users = $db-&gt;getUsers();
+</code></pre>
+
+<p>To this:</p>
+
+<pre><code>//Database Layer example
+$mock_database_users = $db-&gt;getUsers();
+$get_first_user = $db-&gt;getFirstUser();
+</code></pre>
+</li>
+<li>
+<p>Change this:</p>
+
+<pre><code>    $this-&gt;data = [
+            'appName' =&gt; self::appName(), //from DemoData.php
+            'month' =&gt;          date('M'),
+            'day' =&gt;            date('d'),
+            'year' =&gt;           date('Y'),
+            'today'=&gt;           date('l'),
+            'time'=&gt;            date( "F, d"),
+            'bootstrapLint'=&gt;  $trait_lint,
+            'users' =&gt;          $mock_database_users,
+            'appTree' =&gt; self::appTree()
+        ];
+</code></pre>
+
+<p>To this:</p>
+
+<pre><code>    $this-&gt;data = [
+            'appName' =&gt; self::appName(), //from DemoData.php
+            'month' =&gt;          date('M'),
+            'day' =&gt;            date('d'),
+            'year' =&gt;           date('Y'),
+            'today'=&gt;           date('l'),
+            'time'=&gt;            date( "F, d"),
+            'bootstrapLint'=&gt;  $trait_lint,
+            'users' =&gt;          $mock_database_users,
+            'get_first_user' =&gt;          $get_first_user,
+            'appTree' =&gt; self::appTree()
+        ];
+</code></pre>
+</li>
+</ol>
+
+<p><strong>We still need to modify the template</strong></p>
+
+<p>So far, we've created our new <code>Trait::getFirstUser()</code> function, which is used by our PDOWrapper class as <code>$this-&gt;getFirstUser()</code>, included it in our controller class as <code>$db-&gt;getFirstUser()</code> and then assigned to <code>$this-&gt;data['get_first_user']</code>. </p>
+
+<p><em>What is <code>$this-&gt;data</code> used by</em>, you're probably wondering. The template rendering engine, Mustache.</p>
+
+<p>Open <code>src/Views/Demo-home.html</code>. See if you can spot the template variables. For example, {{appName}} was passed to the template as <code>$this-&gt;data['appName']</code>.</p>
+
+<p>In <strong>src/Views/Home-demo.html</strong>:</p>
+
+<p>Change this:</p>
+
+<p><code>&lt;h1&gt;PHP Template Seed Project&lt;/h1&gt;</code></p>
+
+<p>To this:</p>
+
+<p><code>&lt;h1&gt;PHP Template Seed Project&lt;/h1&gt;&lt;div&gt;Get One User: {{get_first_user}}&lt;/div&gt;</code></p>
+
+<p>Save the template file and refresh the page. You should see your data now!</p>
+
+<p>If you are not seeing a response, it means Mustache got an empty variable. Either your database is not returning a row, or you might have mistyped the variable name.</p>
+
+<p>For further templating information, <a href="https://github.com/bobthecow/mustache.php">mustache.php</a> has a good primer on how to pass in your data. If you don't like Mustache <a href="https://github.com/PatrickLouys/no-framework-tutorial/">No Framework</a> tutorial, which this project is based on, explains how to replace the "Renderer".</p>
+
+<hr>
+
+<p><em>Additional Info</em></p>
+
+<h2>
+<a id="tree" class="anchor" href="#tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tree</h2>
+
+<pre><code>php-seed-bootstrap/
+├── optional
+│   └── themes (3rd party themes I did not install into the app structure)
+├── public/ (your public web folder)
+│   ├── assets/ (css, js, et cetera)
+│   └── index.php (app entry point)
+└── src
+    ├── Controllers/
+    ├── Database/PDOWrapper.php (wrap Postgres/MySQL et cetera)
+    ├── Mock/ 
+    │   ├── Database/PDOWrapper.php (mock implementation of the PDO wrapper)
+    │   └── Traits/
+    │       └── DB/QueryData.php (mock your database query functions)
+    ├── Renderer/ (For templating - i.e. mustache, handlebars)
+    ├── Static/ (your static error page is in this directory)
+    ├── Bootstrap.php (bootstrap your project)
+    ├── Dependencies.php (for dependency injection)
+    ├── Routes.php (setup your URI endpoints/routes)
+    ├── Traits/
+    │   └── DB
+    └── Views
+        └── partials (templating include files)
+</code></pre>
+
+<h1>
+<a id="web-sequence-diagram" class="anchor" href="#web-sequence-diagram" aria-hidden="true"><span class="octicon octicon-link"></span></a>Web Sequence Diagram</h1>
+
+<p><img src="https://raw.githubusercontent.com/funkytaco/php-seed-bootstrap/master/diagram.svg" alt="php-seed-bootstrap web sequence" title="php-seed-bootstrap web sequence"></p>
+
+<hr>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it!</li>
+<li>Create your feature branch: <code>git checkout -b my-new-feature</code>
+</li>
+<li>Commit your changes: <code>git commit -am 'Add some feature'</code>
+</li>
+<li>Push to the branch: <code>git push origin my-new-feature</code>
+</li>
+<li>Submit a pull request :D</li>
+</ol>
+
+<h2>
+<a id="history" class="anchor" href="#history" aria-hidden="true"><span class="octicon octicon-link"></span></a>History</h2>
+
+<p>v 0.7.2 Initial commit</p>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>Created by <a href="https://github.com/funkytaco/">@funkytaco</a> based on <a href="https://github.com/PatrickLouys/no-framework-tutorial/">No Framework</a> by <a href="https://github.com/PatrickLuoys/">@PatrickLouys</a>.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<h1>
+<a id="dont-be-a-dick-public-license" class="anchor" href="#dont-be-a-dick-public-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>DON'T BE A DICK PUBLIC LICENSE</h1>
+
+<blockquote>
+<p>Version 1, December 2009</p>
+
+<p>Copyright (C) 2009 Philip Sturgeon <a href="mailto:email@philsturgeon.co.uk">email@philsturgeon.co.uk</a></p>
+</blockquote>
+
+<p>Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.</p>
+
+<blockquote>
+<p>DON'T BE A DICK PUBLIC LICENSE
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION</p>
+</blockquote>
+
+<ol>
+<li>
+<p>Do whatever you like with the original work, just don't be a dick.</p>
+
+<p>Being a dick includes - but is not limited to - the following instances:</p>
+
+<p>1a. Outright copyright infringement - Don't just copy this and change the name.<br>
+ 1b. Selling the unmodified original with no work done what-so-ever, that's REALLY being a dick.<br>
+ 1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.  </p>
+</li>
+<li><p>If you become rich through modifications, related works/services, or supporting the original work,
+share the love. Only a dick would make loads off this work and not buy the original work's 
+creator(s) a pint.</p></li>
+<li><p>Code is provided with no warranty. Using somebody else's code and bitching when it goes wrong makes 
+you a DONKEY dick. Fix the problem yourself. A non-dick would submit the fix back.</p></li>
+</ol>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/funkytaco">funkytaco</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
