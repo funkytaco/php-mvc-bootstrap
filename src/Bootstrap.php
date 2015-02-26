@@ -3,8 +3,8 @@
 namespace Main;
 
 require __DIR__ . '/../vendor/autoload.php';
-include('PDO_DB.php');
-include('mocks/PDO_DB.php'); //comment out or remove for production!
+//include('Database/PDOWrapper.php');
+include('Mock/Database/PDOWrapper.php'); //comment out or remove for production!
 
 $environment = 'development';
 //$environment = 'production';
@@ -33,8 +33,8 @@ $injector = include('Dependencies.php');
 * Database Layer
 *
 */
-//$db = $injector->make('\Main\Database');
-$db = $injector->make('\Mock\Database');
+//$db = $injector->make('\Main\Database\PDOWrapper');
+$db = $injector->make('\Main\Mock\Database\PDOWrapper');
 
 /**
 * HTTP Request/Response Handlers

@@ -5,8 +5,8 @@ namespace Main\Controllers;
 use \Klein\Request;
 use \Klein\Response;
 use \Main\Renderer\Renderer;
-//use \Main\Database; //uncomment to use mysql
-use \Mock\Database; //comment out to use \Main\Database, not a mock class
+//use \Main\Database\PDOWrapper; //uncomment to use mysql or postgres
+use \Main\Mock\Database\PDOWrapper; //comment out to use \Main\Database, not a mock class
 
 class DemoController implements IController
 {
@@ -19,7 +19,7 @@ class DemoController implements IController
         Request $request, 
         Response $response,
         Renderer $renderer,
-        Database $db
+        PDOWrapper $db
     ) {
 
         $this->request = $request;
@@ -40,8 +40,9 @@ class DemoController implements IController
                 'year' =>           date('Y'),
                 'today'=>           date('l'),
                 'time'=>            date( "F, d"),
-                'bootstrap_lint'=>  $trait_lint,
-                'users' =>          $mock_database_users
+                'bootstrapLint'=>  $trait_lint,
+                'users' =>          $mock_database_users,
+                'appTree' => self::appTree()
             ];
     }
 

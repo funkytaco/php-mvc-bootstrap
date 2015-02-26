@@ -43,16 +43,15 @@
         </div>
         <div class="panel-body">
         {{{installation_status}}}
-        {{{bootstrap_lint}}}
         <p>Server Time from template variables: <code>{{today}}, {{time}}</code></p>
-
-        <h4>Data from a Mock Database class</h4>
+        {{{bootstrapLint}}}
+        <h4>Data from a Database PDO Wrapper class</h4>
         <ul>
         {{#users}}
         <li>{{name}}</li>
         {{/users}}
         </ul>
-        <p>This data was rendered by Mustache for PHP.</p>
+        <p>PDO examples for Postgres and MySQL are included. Mock data is used in this example & rendered via Mustache.
         </div>
     </div>
 
@@ -77,23 +76,7 @@
         <h4>Where does everything go?</h4>
 
         <pre><code class="language-bash" data-lang="bash">
-php-seed-bootstrap/
-├── optional
-│   └── themes (3rd party themes I didn't install into the app structure)
-├── public/ (your public web folder)
-│   ├── assets/ (css, js, et cetera)
-│   └── index.php (app entry point)
-└── src
-    ├── Mocks/
-    ├── Renderer/ (templating engine files)
-    ├── Traits/ (php 5.4 traits)
-    ├── Controllers/
-    ├── Static/ (your static error page is in this directory)
-    ├── Bootstrap.php (setup your project)
-    ├── Dependencies.php (for dependency injection)
-    ├── Routes.php (setup your URI endpoints/routes)
-    └── Views
-        └── Partials (templating include files)
+        {{appTree}}
         </code></pre>
 
         <div class="alert alert-info" role="alert">
