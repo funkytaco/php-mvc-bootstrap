@@ -4,6 +4,7 @@
         <title>{{appName}} - Home</title>
     {{> partials/header}}
     {{> partials/header-dashboard}}
+    <link href="/assets/css/bootstrap-callout.css" rel="stylesheet">
     </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -44,14 +45,25 @@
         <div class="panel-body">
         {{{installation_status}}}
         <p>Server Time from template variables: <code>{{today}}, {{time}}</code></p>
-        {{{bootstrapLint}}}
+       
         <h4>Data from a Database PDO Wrapper class</h4>
         <ul>
         {{#users}}
         <li>{{name}}</li>
         {{/users}}
         </ul>
-        <p>PDO examples for Postgres and MySQL are included. Mock data is used in this example & rendered via Mustache.
+        <p>PDO examples for Postgres and MySQL are included. Mock data is used in this example & rendered via Mustache.</p>
+
+        <div class="bs-callout bs-callout-info">
+        <h4>To use PDO instead of the Mock PDO</h4>
+        <ul style="list-style: decimal inside;">
+        <li>In Bootstrap.php uncomment <code>$conn = $injector->make('\Main\PDO'); </code>. It must stay below the <code>$injector->define</code> for PDO.</li>
+        <li>Your controller must <code>use \Main\PDO;</code> and not  <code>use \Main\Mock\PDO;</code></li>
+        <li><b>Config.php</b> should have your database settings. <code>$dbtype</code> should be set to <b>mysql</b> or <b>postgres</b>. You can add other types supported by PDO, as this is just a PDO instantiation.</li>
+        <li>Stub out your database queries. In this demo, we stubbed them out to <code>\Main\Traits\QueryData.php</code> which is included by the PDO class, so <code>$conn->getUsers()</code> is treated like a local class function.</li>
+        </div>
+
+
         </div>
     </div>
 

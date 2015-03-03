@@ -52,7 +52,8 @@
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "public/assets/bootstrap/dist"},
             "docs": { "source": "vendor/twbs/bootstrap/docs", "target": "public/assets/bootstrap/docs"},
-            "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "public/assets/bootstrap/fonts"}
+            "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "public/assets/bootstrap/fonts"},
+            "optional-css": { "source": "optional/css", "target": "public/assets/css"}
         }
     }
 

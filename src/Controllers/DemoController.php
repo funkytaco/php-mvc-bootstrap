@@ -5,8 +5,8 @@ namespace Main\Controllers;
 use \Klein\Request;
 use \Klein\Response;
 use \Main\Renderer\Renderer;
-//use \Main\Database\PDOWrapper; //uncomment to use mysql or postgres
-use \Main\Mock\Database\PDOWrapper; //comment out to use \Main\Database, not a mock class
+//use \Main\PDO;
+use \Main\Mock\PDO;
 
 class DemoController implements IController
 {
@@ -19,16 +19,17 @@ class DemoController implements IController
         Request $request, 
         Response $response,
         Renderer $renderer,
-        PDOWrapper $db
+        PDO $conn
     ) {
 
         $this->request = $request;
         $this->response = $response;
         $this->renderer = $renderer;
-        $this->pdo = $db;
+        $this->conn = $conn;
 
         //Database Layer example
-        $mock_database_users = $db->getUsers();
+        $mock_database_users = $conn->getUsers();
+
         //Using PHP Trait example
         $trait_lint = self::getLintHtmlFromTrait();
 

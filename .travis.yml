@@ -8,4 +8,4 @@ before_script:
 
 before_script:
    - composer install
-script: phpunit --tap test/src/Bootstrap_TEST.php
+script: phpunit --tap test/src/Controllers/ --configuration phpunit.xml
