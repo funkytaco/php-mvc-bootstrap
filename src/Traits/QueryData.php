@@ -9,7 +9,7 @@ namespace Main\Traits;
 
         public function getUsers() {
             $users = [];
-            self::prepUserForMustache($user) { return array('name' => $user); }
+            self::prepUserForMustache($user);
 
             $query = $this->query("SELECT * FROM users");
             $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -19,20 +19,6 @@ namespace Main\Traits;
 
             return $users;
         }
-
-
-        public function getFirstUser() {
-            $users = [];
-
-            $query = $this->query("SELECT * FROM users LIMIT 1");
-            $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($rows as $row) {
-                $user[]  = self::prepUserForMustache($row['name']);
-            }
-
-            return $user;
-        }
-
         
 
     }
