@@ -25,9 +25,9 @@
     }
     $whoops->register();
 
-
     /**
     * Dependency Injector
+    * $injector
     */
     $injector = include(SOURCE_DIR . '/Dependencies.php');
 
@@ -48,45 +48,50 @@
     ]); 
 
     /**
-    * Comment out to use an RDBMS
-    *
+    * Mock Database PDO
+    * $conn
     */
-    //$conn = $injector->make('\Main\Mock\PDO');
+    $conn = $injector->make('\Main\Mock\PDO'); //comment out to use PDO $conn below
 
     /**
-    * Uncomment out to use an RDBMS such as MySQL/PostGres.
     *
-    * Config.php settings already allow MySQL and PostGres
-    * with some modification.
-    * 
-    * You must also "use \Main\PDO" in your controller
-    * instead of "use \Main\Mock\PDO".
+    * Or Use a Real Database via PDO
+    * $conn
+    *   - Config.php holds PDO settings
+    *   - "use \Main\PDO" in your controller
     */
-    $conn = $injector->make('\Main\Mock\PDO'); 
+
+    // $conn = $injector->make('\Main\PDO'); //uncomment to use PDO!
 
     /**
     * HTTP Request/Response Handlers
+    * $request - Request Handler
+    * $response - Response Handler
     */
     $request = $injector->make('\Klein\Request');
     $response = $injector->make('\Klein\Response');
 
     /**
     * Templating Engine
+    * $renderer
     */
     $renderer = $injector->make('Main\Renderer\Renderer');
 
 
     /**
     * App Router
+    * $router
     */
     $router = $injector->make('\Klein\Klein');
 
+    /**
+    * build $routes for the router. This will change depending on
+    * the PHP router you choose.
+    */    
     $routes = include(SOURCE_DIR . '/Routes.php');
 
     foreach ($routes as $route) {
             $router->respond($route[0], $route[1], $route[2]);
     }
-
-
 
     $router->dispatch();
