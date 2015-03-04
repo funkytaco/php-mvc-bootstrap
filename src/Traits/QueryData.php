@@ -5,9 +5,11 @@ namespace Main\Traits;
     trait QueryData {
 
 
+        private function prepUserForMustache($user) { return array('name' => $user); }
+
         public function getUsers() {
             $users = [];
-            function prepUserForMustache($user) { return array('name' => $user); }
+            self::prepUserForMustache($user) { return array('name' => $user); }
 
             $query = $this->query("SELECT * FROM users");
             $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -21,12 +23,11 @@ namespace Main\Traits;
 
         public function getFirstUser() {
             $users = [];
-            function prepUserForMustache($user) { return array('name' => $user); }
 
             $query = $this->query("SELECT * FROM users LIMIT 1");
             $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
             foreach ($rows as $row) {
-                $user[]  = prepUserForMustache($row['name']);
+                $user[]  = self::prepUserForMustache($row['name']);
             }
 
             return $user;

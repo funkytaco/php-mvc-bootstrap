@@ -4,6 +4,8 @@ namespace Main\Mock\Traits;
 
     trait QueryData {
 
+        private function mustachify($user) { return array("name" => "$user"); }
+
         public function appName() {
             return 'PHP Template Seed Project';
         }
@@ -16,8 +18,7 @@ namespace Main\Mock\Traits;
 
         public function getUsers() {
 
-            function mustachify($user) { return array('name' => $user); }
-            $users = [mustachify('@funkytaco'),mustachify('@PatrickLouys'),mustachify('@Rican7')];
+            $users = [self::mustachify('@funkytaco'),self::mustachify('@PatrickLouys'),self::mustachify('@Rican7')];
             return $users;
         }
         
