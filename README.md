@@ -176,8 +176,9 @@ Test directory:
 5. Submit a pull request :D
 
 ## History
-
-v 0.7.2 Initial commit
+  - v 0.7.4 PHPUnit Travis-CI tests. Callout CSS. PDO Config file added. PDO structure and file name changes. Code cleanup for Routes.php
+  - v 0.7.3 Updated license. PDO wrapper changes.
+  - v 0.7.2 Initial commit
 
 ## Credits
 Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
