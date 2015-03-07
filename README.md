@@ -1,8 +1,8 @@
-# php-seed-bootstrap
+# php-mvc-bootstrap
 
 A 'no framework' MVC PHP 5.4 scaffold to seed a Bootstrap-enabled application utilizing Composer and namespaces.
 
-[![Build Status](https://travis-ci.org/funkytaco/php-seed-bootstrap.svg)](http://travis-ci.org/funkytaco/php-seed-bootstrap)
+[![Build Status](https://travis-ci.org/funkytaco/php-mvc-bootstrap.svg)](http://travis-ci.org/funkytaco/php-mvc-bootstrap)
 
 ## Components
 
@@ -36,7 +36,7 @@ The port can be changed in DevTasks.php, which is a Composer scripts PHP file.
 
 #Web Sequence Diagram#
 
-![php-seed-bootstrap web sequence](http://funkytaco.github.io/php-seed-bootstrap/images/diagram.svg "php-seed-bootstrap web sequence")
+![php-mvc-bootstrap web sequence](http://funkytaco.github.io/php-mvc-bootstrap/images/diagram.svg "php-mvc-bootstrap web sequence")
 
 ## Documentation ##
 To create your own view:
