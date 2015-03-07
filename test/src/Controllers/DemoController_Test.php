@@ -4,11 +4,9 @@ class DemoControllerTest extends PHPUnit_Framework_TestCase
 
     public function setup() {
 
-        $request = new \Klein\Request();
-        $response = new \Klein\Response();
         $renderer = new Main\Renderer\MustacheRenderer(new Mustache_Engine);
         $conn = new \Main\Mock\PDO;
-        $this->demo_controller = new Main\Controllers\DemoController($request, $response, $renderer, $conn);
+        $this->demo_controller = new Main\Controllers\DemoController($renderer, $conn);
 
     }
 

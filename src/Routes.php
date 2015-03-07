@@ -4,7 +4,7 @@
         echo 'forbidden';
     };
 
-    $demo_controller = new Main\Controllers\DemoController($request, $response, $renderer, $conn);
+    $demo_controller = new Main\Controllers\DemoController($renderer, $conn);
 
     $return_asset_files = include('MimeTypes.php');
 

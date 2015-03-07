@@ -25,14 +25,10 @@ use \Main\Mock\PDO;
         use \Main\Traits\MenuData;
 
         public function __construct(
-            Request $request, 
-            Response $response,
             Renderer $renderer,
             PDO $conn
         ) {
 
-            $this->request = $request;
-            $this->response = $response;
             $this->renderer = $renderer;
             $this->conn = $conn;
 
@@ -43,6 +39,10 @@ use \Main\Mock\PDO;
             $trait_lint = self::getLintHtmlFromTrait();
 
 
+            $howToRemove = '<div class="alert alert-success" role="alert">'. 
+                'To disable the bootstrap lint test, remove {{{bootstrap_lint}}} from the <i>src/templates/Home-demo.html</i> template file</b>.'.
+                '</div>';
+
             $this->data = [
                     'appName' => self::appName(), //from DemoData.php
                     'month' =>          date('M'),
@@ -52,6 +52,7 @@ use \Main\Mock\PDO;
                     'time'=>            date( "F, d"),
                     'bootstrapLint'=>  $trait_lint,
                     'users' =>          $mock_database_users,
+                    'howToRemove' => $howToRemove,
                     'appTree' => self::appTree()
                 ];
         }
@@ -76,8 +77,7 @@ use \Main\Mock\PDO;
             }
 
             $okHtml = '<div class="alert alert-success" role="alert">'. 
-                '<strong>Well done!</strong> You\'ve successfully installed <b>php-seed-bootstrap</b>. To disable the bootstrap lint test, remove {{{bootstrap_lint}}} from the <i>src/templates/Home-demo.html</i> template file</b>.'.
-                '</div>';
+                '<strong>Well done!</strong> You\'ve successfully installed <b>php-seed-bootstrap</b></div>';
             $failedHtml = '<div style="float:right; border: 2px solid;
         border-radius: 3px; padding: 2px; background-color:yellow;"><h2>Installation incomplete!</h2>'.
                 '<font color="red">Bootstrap assets not copied to public/assets/<br>Reinstall by running <b>composer reinstall</b></font></div>';
@@ -87,62 +87,62 @@ use \Main\Mock\PDO;
         }
 
 
-        public function get() {
+        public function get(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('Home-demo');
 
             self::installationCheck();
             $html = $this->renderer->render('Home-demo', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
 
         }
 
         
-        public function dashboardDemo() {
+        public function dashboardDemo(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('dashboard');
 
             $html = $this->renderer->render('Demo-dashboard', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
         }
 
-        public function jumbotronDemo() {
+        public function jumbotronDemo(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('jumbotron');
 
             $html = $this->renderer->render('Demo-jumbotron', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
         }
 
 
-        public function coverDemo() {
+        public function coverDemo(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('cover');
 
             $html = $this->renderer->render('Demo-cover', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
         }
 
-        public function simpleSidebarDemo() {
+        public function simpleSidebarDemo(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('simplesidebar');
 
             $html = $this->renderer->render('Demo-simplesidebar', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
         }
 
-        public function vanillaDemo() {
+        public function vanillaDemo(Request $request, Response $response) {
             $this->data['demo_menu']  = self::getDemoMenu('vanilla');
 
             $html = $this->renderer->render('Demo-vanilla', $this->data);
 
-            $this->response->body($html);
-            return $this->response;
+            $response->body($html);
+            return $response;
         }
 
-    } 
+    }
