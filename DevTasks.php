@@ -3,6 +3,7 @@
 namespace Tasks;
 
 use Composer\Script\Event;
+use Composer\Installer\PackageEvent;
 
 class DevTasks {
 
@@ -38,7 +39,6 @@ class DevTasks {
           'cyan' => '46',
           'light_gray' => '47',
      );
-
 
     private static function ansiFormat($type = 'INFO', $str) {
         $types = array(
@@ -87,7 +87,7 @@ class DevTasks {
     }
 
 
-    private static function copy_assets_recursive($source, $destination, Event $event) {
+    private static function copy_assets_recursive($source, $destination, $event) {
         echo self::ansiFormat('INFO', 'SOURCE DIR: '. $source);
         echo self::ansiFormat('INFO', 'DESTINATION DIR: '. $destination);
 
@@ -154,10 +154,11 @@ class DevTasks {
     }
 
     public static function postPackageReinstall(Event $event) {
-        self::copy_assets($event);
+        self::copy_assets_for_event($event);
     }
 
-    private static function copy_assets(Event $event) {
+
+private static function copy_assets_for_event(Event $event) {
 
         echo self::ansiFormat('RUNNING>', 'Bootstrap Post-Install Tasks');
         $extra = $event->getComposer()->getPackage()->getExtra();
@@ -195,7 +196,48 @@ class DevTasks {
 
     }
 
-    public static function postPackageInstall(Event $event) {
+
+
+    private static function copy_assets_for_package(PackageEvent $event) {
+
+        echo self::ansiFormat('RUNNING>', 'Bootstrap Post-Install Tasks');
+        $extra = $event->getComposer()->getPackage()->getExtra();
+
+        if(is_array($extra)) {
+            if(array_key_exists('bootstrap-assets', $extra)) {
+
+                foreach($extra['bootstrap-assets'] as $key => $value) {
+
+                    if ($key == 'copy-assets') {
+                        $copy_assets = $value;
+                        continue;
+                    } else {
+                        $arrAsset = $value;
+                    }
+
+                    if ($copy_assets == true && is_array($arrAsset)) {
+                        self::copyAssets($arrAsset['source'] , $arrAsset['target'], $event);
+                    } 
+                }
+              
+            }
+        }
+
+        $css_dir = 'public/assets/css/themes/';
+        if (is_dir($css_dir)) {
+            self::delete_assets_recursive($css_dir);
+        }
+
+        mkdir($css_dir, 0755, true);
+
+        copy('vendor/twbs/bootstrap/docs/examples/dashboard/dashboard.css', $css_dir . 'dashboard.css');
+        copy('vendor/twbs/bootstrap/docs/examples/cover/cover.css', $css_dir .'cover.css');
+
+
+    }
+
+    public static function postPackageInstall(PackageEvent $event) {
+
         echo self::ansiFormat('RUNNING>', 'Post-Install Tasks');
 
         $installedPackage = $event->getOperation()->getPackage();
@@ -204,7 +246,7 @@ class DevTasks {
 
         if (strstr($installedPackage,'twbs/bootstrap') == true) {
 
-          self::copy_assets($event);
+          self::copy_assets_for_package($event);
 
         } else {
 
