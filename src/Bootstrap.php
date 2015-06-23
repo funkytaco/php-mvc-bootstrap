@@ -5,8 +5,13 @@
     define('PUBLIC_DIR', 'public');
     define('SOURCE_DIR', 'src');
     define('VENDOR_DIR', '/../vendor');
+    $autoload_vendor_files = __DIR__ . VENDOR_DIR .'/autoload.php';
 
-    require __DIR__ . VENDOR_DIR .'/autoload.php';
+    if (is_file($autoload_vendor_files)) {
+        require $autoload_vendor_files;
+    } else {
+        exit('vendor directory not found. Please see README.md for install instructions.');
+    }
 
     $environment = 'development';
     //$environment = 'production';
