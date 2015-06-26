@@ -1,12 +1,12 @@
 <?php
-class DemoControllerTest extends PHPUnit_Framework_TestCase
+class IndexControllerTest extends PHPUnit_Framework_TestCase
 {
 
     public function setup() {
 
         $renderer = new Main\Renderer\MustacheRenderer(new Mustache_Engine);
         $conn = new \Main\Mock\PDO;
-        $this->demo_controller = new Main\Controllers\DemoController($renderer, $conn);
+        $this->IndexCtrl = new Main\Controllers\IndexController($renderer, $conn);
 
     }
 
@@ -16,7 +16,7 @@ class DemoControllerTest extends PHPUnit_Framework_TestCase
     * @small
     */
     public function testInstanceOfIController() {
-        $this->assertInstanceOf('Main\Controllers\IController', $this->demo_controller);
+        $this->assertInstanceOf('Main\Controllers\IController', $this->IndexCtrl);
     }
 
 

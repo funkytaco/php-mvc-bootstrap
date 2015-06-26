@@ -1,20 +1,20 @@
-# php-mvc-bootstrap
+# php-mvc
 
-A 'no framework' MVC PHP 5.4 scaffold to seed a Bootstrap-enabled application utilizing Composer and namespaces.
+A modular 'no framework' MVC framework in PHP5.
 
 [![Build Status](https://travis-ci.org/funkytaco/php-mvc-bootstrap.svg)](http://travis-ci.org/funkytaco/php-mvc-bootstrap)
 
 ## Components
 
 Components
-  - [Bootstrap] for front-end development
+  - [Bootstrap] for front-end development (in bootstrap branch)
   - [Composer] for dependency management and project setup (i.e. post installation script events)
   - [whoops] for error handling
   - [Klein.php] for routing
   - [mustache.php] for templating
   - [Auryn] for IoC dependency injection
 
-If you read through [No Framework] for PHP, you can see how to change out these components for others (i.e. replace [mustache.php] with [handlebars.php])
+Change out these components for others (i.e. replace [mustache.php] with [handlebars.php]) by reading through [No Framework] for PHP.
 
 ## Installation
 
@@ -22,8 +22,7 @@ If you read through [No Framework] for PHP, you can see how to change out these 
 $ composer install
 ```
 
-This will install the necessary vendor components and run some post-update scripts to copy [Bootstrap] assets to the public folder.
-
+This will install the necessary vendor components.
 
 ## Usage
 
@@ -36,7 +35,7 @@ The port can be changed in DevTasks.php, which is a Composer scripts PHP file.
 
 #Web Sequence Diagram#
 
-![php-mvc-bootstrap web sequence](http://funkytaco.github.io/php-mvc-bootstrap/images/diagram.svg "php-mvc-bootstrap web sequence")
+![php-mvc-bootstrap web sequence](http://funkytaco.github.io/php-mvc/images/diagram.svg "php-mvc web sequence")
 
 ## Documentation ##
 To create your own view:
@@ -119,7 +118,7 @@ To this:
 **We still need to modify the template**
 
 
-In **src/Views/Home-demo.html**:
+In **src/Views/index.html**:
 
 Change this:
 
@@ -176,6 +175,7 @@ Test directory:
 5. Submit a pull request :D
 
 ## History
+  - v 0.7.5 stripped out Bootstrap from master branch and moved it to a bootstrap branch.
   - v 0.7.4 PHPUnit Travis-CI tests. Callout CSS. PDO Config file added. PDO structure and file name changes. Code cleanup for Routes.php
   - v 0.7.3 Updated license. PDO wrapper changes.
   - v 0.7.2 Initial commit
