@@ -10,7 +10,7 @@
     if (is_file($autoload_vendor_files)) {
         require $autoload_vendor_files;
     } else {
-        exit('vendor directory not found. Please see README.md for install instructions.');
+        exit('<b>vendor</b> directory not found. Please see README.md for install instructions, or simply try running <b>composer install</b>.');
     }
 
     $environment = 'development';
