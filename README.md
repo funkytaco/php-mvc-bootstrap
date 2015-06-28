@@ -2,137 +2,57 @@
 
 A modular 'no framework' MVC framework in PHP5.
 
-[![Build Status](https://travis-ci.org/funkytaco/php-mvc-bootstrap.svg)](http://travis-ci.org/funkytaco/php-mvc-bootstrap)
-
-## Components
-
-Components
-  - [Bootstrap] for front-end development (in bootstrap branch)
-  - [Composer] for dependency management and project setup (i.e. post installation script events)
-  - [whoops] for error handling
-  - [Klein.php] for routing
-  - [mustache.php] for templating
-  - [Auryn] for IoC dependency injection
-
-Change out these components for others (i.e. replace [mustache.php] with [handlebars.php]) by reading through [No Framework] for PHP.
+[![Build Status](https://travis-ci.org/funkytaco/php-mvc.svg)](http://travis-ci.org/funkytaco/php-mvc)
 
 ## Installation
 
 ```sh
 $ composer install
 ```
-
-This will install the necessary vendor components.
-
 ## Usage
-
 To run a development server on localhost port 8000:
-
 ```sh
 $ composer serve
 ```
-The port can be changed in DevTasks.php, which is a Composer scripts PHP file.
+The port can be changed in **DevTasks.php**, which is a Composer scripts PHP file.
 
-#Web Sequence Diagram#
+## Usage ##
+### 1) Create your own View ###
+- add a template view in **src/Views/** by default, this is a [Mustache]() template. (It is possible to change the rendering engine).
+    - add a controller in src/Controllers/ which uses the view.
+    - add a route in **src/Routes.php** that uses the controller.
 
-![php-mvc-bootstrap web sequence](http://funkytaco.github.io/php-mvc/images/diagram.svg "php-mvc web sequence")
+    For further templating information, [mustache.php] has a good primer on how to pass in your data. If you don't like Mustache, then [No Framework Templating], explains how to replace the "Renderer".
 
-## Documentation ##
-To create your own view:
-- add a route in src/Routes.php
-- add a template view in src/Views/
-- add a controller in src/Controllers/
+### 2) Create your own Controller ###
+- add a controller in **src/Controllers/** [(Example Controller)](https://github.com/funkytaco/php-mvc/blob/master/src/Controllers/IndexController.php)
+    - For the controller to be used, it must be used by a route in  **src/Routes.php**
+    - Reference a view to load in the controller function, if applicable.
+    - `$this->data` is how your model data will be accessed by the controller, and shared with the view.
 
-###Database PDO Setup###
-By default, the project is using a Mock Database wrapper.
 
-To use a MySQL/Postgres/Other Database:
+### 3) Create your own Model ###
+ - You can put your model in **src/Traits/** or **src/Models** for models which will not be re-used.
+    - The **$conn PDO** connection is be passed into the controller.
+ - The PDOWrapper class `uses` the namespace of your Trait file, e.g.,
+`use \Main\Traits\MyQueryData`. Since this class is now loaded in the class all of its functions are available to the parent class.
+- e.g. `getUsers()` in our traits file is accessible as `$conn->getUsers()`.
+
+    ####To use a MySQL/Postgres/Other Database:####
 - In `src/Traits/QueryData.php`
     - add your query functions in  (I will explain how to use these functions in your view)
     - uncomment `$conn = $injector->make('\Main\PDO');` . It must stay below the `$injector->define` for PDO.
 - In your controller:
     -  **use \Main\PDO;** and comment/remove **use \Main\Mock\PDO;**
 - In `Config.php`:
-    - `$dbtype` should be set to *mysql* or *postgres* 
+    - `$dbtype` should be set to *mysql* or *postgres*
     - You can add other types supported by PDO, as this is just a PDO instantiation.
 - Stub out your database queries:
     - In this demo, we stubbed them out to \Main\Traits\QueryData.php which is included by the PDO class, so `$conn->getUsers()` is treated like a local class function.
 
 
-##Using Database results in your view##
-
-We use **PHP Traits** includes to keep the code out of our PDOWrapper class. Take a look at `src/PDO.php` to see how we `include` it.
 
 Where is all of our model code? In the **PHP Traits** file, `src/Traits/QueryData.php`.
-
-If you are new to **PHP Traits** it works like this:
-- The PDOWrapper class `uses` the namespace of your Trait file, e.g., 
-`use \Main\Traits\MyQueryData`. Since this class is now loaded in the class all of its functions are available to the parent class. 
-- e.g. `getUsers()` in our traits file is accessible as `$conn->getUsers()`.
-
-###Rendering database results in your template###
-
-
-In `src/Controllers/DemoController.php`:
- - Add your function. For this example, we're gonna skip this step.
-
-NOTE: The `$conn` variable is a reference to the PDO class injected into the controller.
-1. Change this:
-
-        //Database Layer example
-        $mock_database_users = $conn->getUsers();
-To this:
-
-        //Database Layer example
-        $mock_database_users = $conn->getUsers();
-        $get_my_data = 'Hello world!'; //or $conn->yourFunction();
-2. Change this:
-
-            $this->data = [
-                    'appName' => self::appName(), //from DemoData.php
-                    'month' =>          date('M'),
-                    'day' =>            date('d'),
-                    'year' =>           date('Y'),
-                    'today'=>           date('l'),
-                    'time'=>            date( "F, d"),
-                    'bootstrapLint'=>  $trait_lint,
-                    'users' =>          $mock_database_users,
-                    'appTree' => self::appTree()
-                ];
-To this:
-
-            $this->data = [
-                    'appName' => self::appName(), //from DemoData.php
-                    'month' =>          date('M'),
-                    'day' =>            date('d'),
-                    'year' =>           date('Y'),
-                    'today'=>           date('l'),
-                    'time'=>            date( "F, d"),
-                    'bootstrapLint'=>  $trait_lint,
-                    'users' =>          $mock_database_users,
-                    'get_my_data' =>         $get_my_data, //this line!
-                    'appTree' => self::appTree()
-                ];
-`$this->data` is data that will be used by the template engine.
-
-**We still need to modify the template**
-
-
-In **src/Views/index.html**:
-
-Change this:
-
-`<h1>PHP Template Seed Project</h1>`
-
-To this:
-
-`<h1>PHP Template Seed Project</h1><div>Get One User: {{get_my_data}}</div>`
-
-Save the template file and refresh the page. You should see your data now!
-
-If you are not seeing a response, it means the templating engine, Mustache, got an empty variable. Either your database is not returning a row, or you might have mistyped the variable name.
-
-For further templating information, [mustache.php] has a good primer on how to pass in your data. If you don't like Mustache, then [No Framework] tutorial, which this project is based on, explains how to replace the "Renderer".
 
 ***
 *Additional Info*
@@ -166,6 +86,18 @@ Test directory:
         └── Mock
 ***
 
+## Components
+
+Components
+  - [Bootstrap] for front-end development (in bootstrap branch)
+  - [Composer] for dependency management and project setup (i.e. post installation script events)
+  - [whoops] for error handling
+  - [Klein.php] for routing
+  - [mustache.php] for templating
+  - [Auryn] for IoC dependency injection
+
+Change out these components for others (i.e. replace [mustache.php] with [handlebars.php]) by reading through [No Framework] for PHP.
+
 ## Contributing
 
 1. Fork it!
@@ -191,7 +123,7 @@ Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
 > Version 1, December 2009
 
 > Copyright (C) 2009 Philip Sturgeon <email@philsturgeon.co.uk>
- 
+
  Everyone is permitted to copy and distribute verbatim or modified
  copies of this license document, and changing it is allowed as long
  as the name is changed.
@@ -208,10 +140,10 @@ Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
      1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.  
 
  2. If you become rich through modifications, related works/services, or supporting the original work,
- share the love. Only a dick would make loads off this work and not buy the original work's 
+ share the love. Only a dick would make loads off this work and not buy the original work's
  creator(s) a pint.
- 
- 3. Code is provided with no warranty. Using somebody else's code and bitching when it goes wrong makes 
+
+ 3. Code is provided with no warranty. Using somebody else's code and bitching when it goes wrong makes
  you a DONKEY dick. Fix the problem yourself. A non-dick would submit the fix back.
 
 
@@ -224,4 +156,5 @@ Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
 [Auryn]:https://github.com/rdlowrey/Auryn/
 [@funkytaco]:https://github.com/funkytaco/
 [No Framework]:https://github.com/PatrickLouys/no-framework-tutorial/
+[No Framework Templating]: https://github.com/PatrickLouys/no-framework-tutorial/blob/master/09-templating.md
 [@PatrickLouys]:https://github.com/PatrickLuoys/
