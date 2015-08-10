@@ -41,7 +41,7 @@
 </head>
 <body class="content">
     <div style="width:800px; margin:0 auto;">
-        <span style="align: center;">Oops! We'll look into that. <a class="btn" href="/">Go Home</a></span>
+        <br><span style="align: center;">Oops! We'll look into that. <a class="btn" href="/">Go Home</a></span>
     </div>
 </body>
 </html>

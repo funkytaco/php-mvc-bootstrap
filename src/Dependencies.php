@@ -9,9 +9,9 @@ $injector->alias('\Klein\Response','\Klein\Response');
 
 $injector->define('Mustache_Engine', [
     ':options' => [
-	    'loader'          => new Mustache_Loader_FilesystemLoader(dirname(__DIR__) .'/'. SOURCE_DIR .'/Views',
+	    'loader'          => new Mustache_Loader_FilesystemLoader( VIEWS_DIR,
         $mustache_options),
-       	'partials_loader'          => new Mustache_Loader_FilesystemLoader(dirname(__DIR__)  .'/'. SOURCE_DIR .'/Views',
+       	'partials_loader'          => new Mustache_Loader_FilesystemLoader( VIEWS_DIR,
         $mustache_options),
 
     ],

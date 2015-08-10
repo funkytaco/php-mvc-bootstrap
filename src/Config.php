@@ -1,6 +1,6 @@
 <?php
 
-    $dbtype = 'postgres'; 
+    $dbtype = 'postgres';
 
     switch($dbtype) {
         case 'postgres':
@@ -11,7 +11,7 @@
         'options' => null
         ];
         break;
-        
+
         case 'mysql':
         $settings = [
         'dsn' => 'mysql:dbname=clouddb;host=127.0.0.1;',

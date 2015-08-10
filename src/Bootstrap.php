@@ -1,10 +1,43 @@
 <?php /*** Bootstrap file ***/
 
     namespace Main;
-    
+
+    define('ENV', 'development');
+
+    /** IF YOU NEED TO MODIFY CONSTANTS I SUGGEST INCLUDING THE FILE
+        OUTSIDE OF THE GIT REPOSITORY FOR THIS PROJECT AND
+        USING A PHP include() below.
+        At the very least your build process should back up
+        your modified copy of this file.
+     **/
+
     define('PUBLIC_DIR', 'public');
     define('SOURCE_DIR', 'src');
     define('VENDOR_DIR', '/../vendor');
+    define('CONTROLLERS_DIR', '../Controllers');
+    define('DATABASE_DIR', 'src/Database'); /* unused */
+    define('MOCK_DIR', 'src/Mock'); /* unused */
+    define('RENDERER_DIR', 'src/Renderer'); /* unused */
+    define('STATIC_DIR', 'src/Static'); /* unused */
+    define('TRAITS_DIR', 'src/Traits'); /* unused */
+    define('VIEWS_DIR', '../Views');
+
+    define('CUSTOM_ROUTES_FILE', '../CustomRoutes.php');
+    define('CONFIG_FILE', 'src/Config.php');
+    define('DEPENDENCIES_FILE', 'src/Dependencies.php');
+    define('MIMETYPES_FILE', 'src/MimeTypes.php');
+
+    spl_autoload_register(function ($class) {
+      if (is_file(CONTROLLERS_DIR .'/' . $class . '.php')) {
+        require_once CONTROLLERS_DIR .'/' . $class . '.php';
+      }
+      if (is_file(TRAITS_DIR .'/' . $class . '.php')) {
+        require_once TRAITS_DIR .'/' . $class . '.php';
+      }
+
+    });
+
+
     $autoload_vendor_files = __DIR__ . VENDOR_DIR .'/autoload.php';
 
     if (is_file($autoload_vendor_files)) {
@@ -13,14 +46,12 @@
         exit('<b>vendor</b> directory not found. Please see README.md for install instructions, or simply try running <b>composer install</b>.');
     }
 
-    $environment = 'development';
-    //$environment = 'production';
 
     /**
     * Error Handler
     */
     $whoops = new \Whoops\Run;
-    if ($environment !== 'production') {
+    if (ENV !== 'production') {
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
     } else {
         $whoops->pushHandler(function($e){
@@ -34,12 +65,12 @@
     * Dependency Injector
     * $injector
     */
-    $injector = include(SOURCE_DIR . '/Dependencies.php');
+    $injector = include(DEPENDENCIES_FILE);
 
     /**
     * Database Configuration
     */
-    $settings = include(SOURCE_DIR . '/Config.php');
+    $settings = include(CONFIG_FILE);
 
     /**
     * Pass $injector PDO configuration
@@ -48,9 +79,9 @@
     $injector->define('\Main\PDO', [
       ':dsn' => $settings['dsn'],
       ':username' => $settings['username'],
-      ':passwd' => '',
-      ':options' => null // removed this line for exception
-    ]); 
+      ':passwd' => $settings['password'],
+      ':options' => $settings['options']
+    ]);
 
     /**
     * Mock Database PDO
@@ -92,11 +123,20 @@
     /**
     * build $routes for the router. This will change depending on
     * the PHP router you choose.
-    */    
-    $routes = include(SOURCE_DIR . '/Routes.php');
+    */
+    $routes = include('Routes.php');
+    $custom_routes = include(CUSTOM_ROUTES_FILE);
 
-    foreach ($routes as $route) {
-            $router->respond($route[0], $route[1], $route[2]);
+    if (gettype($routes) == 'array') {
+      foreach ($routes as $route) {
+              $router->respond($route[0], $route[1], $route[2]);
+      }
     }
+    if (gettype($custom_routes) == 'array') {
+      foreach ($custom_routes as $route) {
+              //$router->respond($route[0], $route[1], $route[2]);
+      }
+    }
+
 
     $router->dispatch();
