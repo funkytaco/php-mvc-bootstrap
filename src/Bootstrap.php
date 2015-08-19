@@ -1,33 +1,24 @@
 <?php /*** Bootstrap file ***/
 
     namespace Main;
+    error_reporting(E_ALL);
 
     define('ENV', 'development');
 
-    /** IF YOU NEED TO MODIFY CONSTANTS I SUGGEST INCLUDING THE FILE
-        OUTSIDE OF THE GIT REPOSITORY FOR THIS PROJECT AND
-        USING A PHP include() below.
-        At the very least your build process should back up
-        your modified copy of this file.
-     **/
+    define('MODELS_DIR', __DIR__ . '/../Models');
+    define('VIEWS_DIR', __DIR__ . '/../Views');
+    define('CONTROLLERS_DIR', __DIR__ . '/../Controllers');
 
-    define('PUBLIC_DIR', 'public');
-    define('SOURCE_DIR', 'src');
+    define('SOURCE_DIR', __DIR__);
     define('VENDOR_DIR', '/../vendor');
-    define('CONTROLLERS_DIR', '../Controllers');
-    define('DATABASE_DIR', 'src/Database'); /* unused */
-    define('MOCK_DIR', 'src/Mock'); /* unused */
-    define('RENDERER_DIR', 'src/Renderer'); /* unused */
-    define('STATIC_DIR', 'src/Static'); /* unused */
-    define('TRAITS_DIR', 'src/Traits'); /* unused */
-    define('VIEWS_DIR', '../Views');
+    define('PUBLIC_DIR', 'public');
 
-    define('CUSTOM_ROUTES_FILE', '../CustomRoutes.php');
-    define('CONFIG_FILE', 'src/Config.php');
-    define('DEPENDENCIES_FILE', 'src/Dependencies.php');
-    define('MIMETYPES_FILE', 'src/MimeTypes.php');
+    define('CUSTOM_ROUTES_FILE', __DIR__ .'/../CustomRoutes.php');
+    define('CONFIG_FILE', SOURCE_DIR . '/Config.php');
+    define('DEPENDENCIES_FILE', SOURCE_DIR . '/Dependencies.php');
+    define('MIMETYPES_FILE', SOURCE_DIR . '/MimeTypes.php');
 
-    spl_autoload_register(function ($class) {
+    /** spl_autoload_register(function ($class) {
       if (is_file(CONTROLLERS_DIR .'/' . $class . '.php')) {
         require_once CONTROLLERS_DIR .'/' . $class . '.php';
       }
@@ -35,7 +26,7 @@
         require_once TRAITS_DIR .'/' . $class . '.php';
       }
 
-    });
+    }); **/
 
 
     $autoload_vendor_files = __DIR__ . VENDOR_DIR .'/autoload.php';
@@ -60,6 +51,12 @@
         });
     }
     $whoops->register();
+
+    /***if (!is_file(CUSTOM_ROUTES_FILE)) {
+        throw new \Exception("CUSTOM_ROUTES_FILE does not exist. To install a Bootstrap template run:". PHP_EOL
+        ."composer install-bootstrap\n");
+    }***/
+
 
     /**
     * Dependency Injector
@@ -120,23 +117,30 @@
     */
     $router = $injector->make('\Klein\Klein');
 
+    /**** end injector includes ***/
+
     /**
     * build $routes for the router. This will change depending on
     * the PHP router you choose.
     */
     $routes = include('Routes.php');
-    $custom_routes = include(CUSTOM_ROUTES_FILE);
 
     if (gettype($routes) == 'array') {
       foreach ($routes as $route) {
               $router->respond($route[0], $route[1], $route[2]);
       }
     }
-    if (gettype($custom_routes) == 'array') {
-      foreach ($custom_routes as $route) {
-              //$router->respond($route[0], $route[1], $route[2]);
-      }
+
+    if (is_file(CUSTOM_ROUTES_FILE)) {
+
+        $custom_routes = include(CUSTOM_ROUTES_FILE);
+        if (gettype($custom_routes) == 'array') {
+          foreach ($custom_routes as $route) {
+                  $router->respond($route[0], $route[1], $route[2]);
+          }
+        }
     }
+
 
 
     $router->dispatch();

@@ -9,10 +9,9 @@
     /*** DO NOT MODIFY - See Bootstrap.php. Put custom routes in CUSTOM_ROUTES_FILE **/
     return [
         //Asset Files - do not change unless you know what you are doing - defined in MimeTypes.php
-        ['GET', '@\.(css|eot|js|json|less|svg|ttf|woff|woff2|md)$', $return_asset_files],
+        ['GET', '@\.(css|eot|js|json|less|jpg|bmp|png|svg|ttf|woff|woff2|md)$', $return_asset_files],
         //Index Page
-        ['GET', '/', [$IndexCtrl, 'get']],
-        ['OPTIONS', null, $forbidden],
+         ['OPTIONS', null, $forbidden],
         //catchall
-        ['GET', '/[*:catchall]', function() { return ''; } ],
+        ['GET', '/[*:catchall]', function() { return 'NULL'; } ],
     ];

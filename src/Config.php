@@ -7,7 +7,7 @@
         $settings = [
         'dsn' => 'pgsql:dbname=clouddbpostgres;host=127.0.0.1;',
         'username' => 'lgonzalez',
-        'passwd' => '',
+        'password' => '',
         'options' => null
         ];
         break;
@@ -16,7 +16,7 @@
         $settings = [
         'dsn' => 'mysql:dbname=clouddb;host=127.0.0.1;',
         'username' => 'root',
-        'passwd' => '',
+        'password' => '',
         'options' => null
         ];
 
