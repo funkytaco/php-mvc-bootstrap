@@ -1,2 +1,6 @@
+!.*
+src/.lock/app.lock
+.DS_Store
 vendor/
 public/assets/
+app/

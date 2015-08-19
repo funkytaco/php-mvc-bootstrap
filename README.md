@@ -2,12 +2,16 @@
 
 A modular 'no framework' MVC framework in PHP5.
 
-[![Build Status](https://travis-ci.org/funkytaco/php-mvc.svg)](http://travis-ci.org/funkytaco/php-mvc)
+Build Status - Untracked
 
 ## Installation
 
 ```sh
 $ composer install
+```
+
+```sh
+$ composer install-mvc
 ```
 ## Usage
 To run a development server on localhost port 8000:
@@ -18,21 +22,21 @@ The port can be changed in **DevTasks.php**, which is a Composer scripts PHP fil
 
 ## Usage ##
 ### 1) Create your own View ###
-- add a template view in **src/Views/** by default, this is a [Mustache]() template. (It is possible to change the rendering engine).
+- add a template view in **app/Views/** by default, this is a [Mustache]() template. (It is possible to change the rendering engine).
     - add a controller in src/Controllers/ which uses the view.
-    - add a route in **src/Routes.php** that uses the controller.
+    - add a route in **app/CustomRoutes.php** that uses the controller.
 
     For further templating information, [mustache.php] has a good primer on how to pass in your data. If you don't like Mustache, then [No Framework Templating], explains how to replace the "Renderer".
 
 ### 2) Create your own Controller ###
-- add a controller in **src/Controllers/** [(Example Controller)](https://github.com/funkytaco/php-mvc/blob/master/src/Controllers/IndexController.php)
-    - For the controller to be used, it must be used by a route in  **src/Routes.php**
+- add a controller in **app/Controllers/** [(Example Controller)](https://gist.github.com/funkytaco/87fd34b5ef863ebbc120)
+    - For the controller to be used, it must be used by a route in  **app/Routes.php**
     - Reference a view to load in the controller function, if applicable.
     - `$this->data` is how your model data will be accessed by the controller, and shared with the view.
 
 
 ### 3) Create your own Model ###
- - You can put your model in **src/Traits/** or **src/Models** for models which will not be re-used.
+ - You can put your model in **app/Traits/** or **app/Models** for models which will not be re-used.
     - The **$conn PDO** connection is be passed into the controller.
  - The PDOWrapper class `uses` the namespace of your Trait file, e.g.,
 `use \Main\Traits\MyQueryData`. Since this class is now loaded in the class all of its functions are available to the parent class.
@@ -48,42 +52,57 @@ The port can be changed in **DevTasks.php**, which is a Composer scripts PHP fil
     - `$dbtype` should be set to *mysql* or *postgres*
     - You can add other types supported by PDO, as this is just a PDO instantiation.
 - Stub out your database queries:
-    - In this demo, we stubbed them out to \Main\Traits\QueryData.php which is included by the PDO class, so `$conn->getUsers()` is treated like a local class function.
+    - create a Foo_Module.php in **src/Modules** and include it like the example Date_Module class.
 
 
 
-Where is all of our model code? In the **PHP Traits** file, `src/Traits/QueryData.php`.
 
 ***
 *Additional Info*
 
 ##Tree##
-Optional directory:
+public assets directory:
+Any CSS/JS/media assets MUST go in public/assets
 
-    optional
-    ├── css
-    └── themes
-        └── simple-sidebar
+    public
+    ├── assets
+    └── index.php
+
+
+
+
+
+
 
 Source directory:
-
+This is the core of our MVC framework.
     src
-    ├── Controllers
-    ├── Database
+    ├── Bootstrap.php
+    ├── Dependencies.php
+    ├── MimeTypes.php
     ├── Mock
+    │   ├── PDO.php
     │   └── Traits
+    │       └── QueryData.php
+    ├── Modules
+    │   └── Date_Module.php
     ├── Renderer
-    ├── Static
-    ├── Traits
-    │   └── DB
-    └── Views
-        └── partials
+    │   ├── MustacheRenderer.php
+    │   └── Renderer.php
+    ├── Routes.php
+    └── Static
+        └── Error.php
 Test directory:
 
     test
+    ├── bootstrap.php
     └── src
         ├── Controllers
+        │   └── IndexController_Test.php
         └── Mock
+            └── PDO_Test.php
+
+
 ***
 
 ## Components
@@ -107,45 +126,11 @@ Change out these components for others (i.e. replace [mustache.php] with [handle
 5. Submit a pull request :D
 
 ## History
-  - v 0.8 - Removed M/V/C/PDO from Git tracking for modularity.
   - v 0.7.5 stripped out Bootstrap from master branch and moved it to a bootstrap branch.
   - v 0.7.4 PHPUnit Travis-CI tests. Callout CSS. PDO Config file added. PDO structure and file name changes. Code cleanup for Routes.php
   - v 0.7.3 Updated license. PDO wrapper changes.
   - v 0.7.2 Initial commit
 
-## Credits
-Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
-
-
-## License
-
-# DON'T BE A DICK PUBLIC LICENSE
-
-> Version 1, December 2009
-
-> Copyright (C) 2009 Philip Sturgeon <email@philsturgeon.co.uk>
-
- Everyone is permitted to copy and distribute verbatim or modified
- copies of this license document, and changing it is allowed as long
- as the name is changed.
-
-> DON'T BE A DICK PUBLIC LICENSE
-> TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
- 1. Do whatever you like with the original work, just don't be a dick.
-
-     Being a dick includes - but is not limited to - the following instances:
-
-     1a. Outright copyright infringement - Don't just copy this and change the name.  
-     1b. Selling the unmodified original with no work done what-so-ever, that's REALLY being a dick.  
-     1c. Modifying the original work to contain hidden harmful content. That would make you a PROPER dick.  
-
- 2. If you become rich through modifications, related works/services, or supporting the original work,
- share the love. Only a dick would make loads off this work and not buy the original work's
- creator(s) a pint.
-
- 3. Code is provided with no warranty. Using somebody else's code and bitching when it goes wrong makes
- you a DONKEY dick. Fix the problem yourself. A non-dick would submit the fix back.
 
 
 [Bootstrap]:http://www.getbootstrap.com/
@@ -155,7 +140,6 @@ Created by [@funkytaco] based on [No Framework] by [@PatrickLouys].
 [mustache.php]:https://github.com/bobthecow/mustache.php
 [handlebars.php]:https://github.com/XaminProject/handlebars.php/
 [Auryn]:https://github.com/rdlowrey/Auryn/
-[@funkytaco]:https://github.com/funkytaco/
 [No Framework]:https://github.com/PatrickLouys/no-framework-tutorial/
 [No Framework Templating]: https://github.com/PatrickLouys/no-framework-tutorial/blob/master/09-templating.md
 [@PatrickLouys]:https://github.com/PatrickLuoys/

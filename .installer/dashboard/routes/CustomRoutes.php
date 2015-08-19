@@ -1,10 +1,10 @@
 <?php
 
-    include('Controllers/IndexController.php');
+    include('app/Controllers/IndexController.php');
 
     $mod_date = $injector->make('Main\Modules\Date_Module');
     $IndexCtrl = new IndexController($renderer, $conn, $mod_date);
-    
+
     return [
         //Index Page
         ['GET', '/', [$IndexCtrl, 'get']],

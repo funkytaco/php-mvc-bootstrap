@@ -5,29 +5,18 @@
 
     define('ENV', 'development');
 
-    define('MODELS_DIR', __DIR__ . '/../Models');
-    define('VIEWS_DIR', __DIR__ . '/../Views');
-    define('CONTROLLERS_DIR', __DIR__ . '/../Controllers');
+    define('MODELS_DIR', __DIR__ . '/../app/Models');
+    define('VIEWS_DIR', __DIR__ . '/../app/Views');
+    define('CONTROLLERS_DIR', __DIR__ . '/../app/Controllers');
 
     define('SOURCE_DIR', __DIR__);
     define('VENDOR_DIR', '/../vendor');
     define('PUBLIC_DIR', 'public');
 
-    define('CUSTOM_ROUTES_FILE', __DIR__ .'/../CustomRoutes.php');
-    define('CONFIG_FILE', SOURCE_DIR . '/Config.php');
+    define('CUSTOM_ROUTES_FILE', __DIR__ .'/../app/CustomRoutes.php');
+    define('CONFIG_FILE', __DIR__ . '/../app/app.config.php');
     define('DEPENDENCIES_FILE', SOURCE_DIR . '/Dependencies.php');
     define('MIMETYPES_FILE', SOURCE_DIR . '/MimeTypes.php');
-
-    /** spl_autoload_register(function ($class) {
-      if (is_file(CONTROLLERS_DIR .'/' . $class . '.php')) {
-        require_once CONTROLLERS_DIR .'/' . $class . '.php';
-      }
-      if (is_file(TRAITS_DIR .'/' . $class . '.php')) {
-        require_once TRAITS_DIR .'/' . $class . '.php';
-      }
-
-    }); **/
-
 
     $autoload_vendor_files = __DIR__ . VENDOR_DIR .'/autoload.php';
 
@@ -52,10 +41,6 @@
     }
     $whoops->register();
 
-    /***if (!is_file(CUSTOM_ROUTES_FILE)) {
-        throw new \Exception("CUSTOM_ROUTES_FILE does not exist. To install a Bootstrap template run:". PHP_EOL
-        ."composer install-bootstrap\n");
-    }***/
 
 
     /**
@@ -65,19 +50,22 @@
     $injector = include(DEPENDENCIES_FILE);
 
     /**
-    * Database Configuration
+    * App Configuration - these are imported via the .installer directory
     */
-    $settings = include(CONFIG_FILE);
-
+    if (is_file(CONFIG_FILE)) {
+        $config = include(CONFIG_FILE);
+    } else {
+        exit('App config file not found: '. CONFIG_FILE);
+    }
     /**
     * Pass $injector PDO configuration
     *
     */
     $injector->define('\Main\PDO', [
-      ':dsn' => $settings['dsn'],
-      ':username' => $settings['username'],
-      ':passwd' => $settings['password'],
-      ':options' => $settings['options']
+      ':dsn' => $config['pdo']['dsn'],
+      ':username' => $config['pdo']['username'],
+      ':passwd' => $config['pdo']['password'],
+      ':options' => $config['pdo']['options']
     ]);
 
     /**
@@ -90,7 +78,7 @@
     *
     * Or Use a Real Database via PDO
     * $conn
-    *   - Config.php holds PDO settings
+    *   - app.config.php holds PDO settings
     *   - "use \Main\PDO" in your controller
     */
 

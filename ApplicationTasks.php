@@ -217,26 +217,59 @@ class ApplicationTasks {
         //end
     }
 
-    public static function InstallBootstrap(Event $event) {
+    public static function commitToInstallerDirectory(Event $event) {
+
+        echo self::ansiFormat('RUNNING>', 'Commit To Installer Directory...');
+        $settings = include('app/app.config.php');
+
+        /** todo: add more sanity checks **/
+        if ($settings['views']) {
+            $source =  "app/". $settings['views'];
+            $destination = '.installer/'. $settings['installer-name'] .'/'. $settings['views'];
+            $isFile = FALSE;
+            echo self::copyAssets($source, $destination, $isFile, $event);
+        }
+
+        if ($settings['controllers']) {
+            $source =  "app/". $settings['controllers'];
+            $destination = '.installer/'. $settings['installer-name'] .'/'. $settings['controllers'];
+            $isFile = FALSE;
+            echo self::copyAssets($source, $destination, $isFile, $event);
+        }
+
+
+    }
+
+    private static function list_directory_files($path, $event) {
+        echo self::ansiFormat('INFO', 'Listing Directory Files...');
+        $fullPath = '.installer/'. $path;
+
+        if (is_dir($fullPath)) {
+            $arrFiles = array_diff(scandir($fullPath), array('..', '.'));
+            return $arrFiles;
+        } else {
+            return [];
+        }
+    }
+
+    private static function AreComposerPackagesInstalled(Event $event) {
+        if (is_file('vendor/autoload.php')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function InstallMvc(Event $event) {
+        if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
         echo self::ansiFormat('RUNNING>', 'Installing Bootstrap Template...');
-        self::copy_extra_assets('bootstrap-assets', $event);
+        self::copy_extra_assets('mvc-assets', $event);
     }
 
     public static function InstallSemanticUi(Event $event) {
+        if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
         echo self::ansiFormat('RUNNING>', 'Installing Semantic UI Template...');
         self::copy_extra_assets('semanticui-assets', $event);
-
-    }
-
-    public static function InstallDashboard(Event $event) {
-        echo self::ansiFormat('RUNNING>', 'Installing Semantic UI Dashboard...');
-        self::copy_extra_assets('dashboard-assets', $event);
-
-    }
-
-    public static function InstallApi(Event $event) {
-        echo self::ansiFormat('RUNNING>', 'Installing API Template...');
-        self::copy_extra_assets('restapi-assets', $event);
 
     }
 
@@ -273,7 +306,7 @@ class ApplicationTasks {
     }
 
     public static function postPackageReinstallBootstrap(Event $event) {
-        self::copy_extra_assets('bootstrap-assets', $event);
+        self::copy_extra_assets('mvc-assets', $event);
     }
 
     public static function postPackageReinstallSemanticUi(Event $event) {
@@ -286,9 +319,9 @@ class ApplicationTasks {
         $extra = $event->getComposer()->getPackage()->getExtra();
 
         if(is_array($extra)) {
-            if(array_key_exists('bootstrap-assets', $extra)) {
+            if(array_key_exists('mvc-assets', $extra)) {
 
-                foreach($extra['bootstrap-assets'] as $key => $value) {
+                foreach($extra['mvc-assets'] as $key => $value) {
 
                     if ($key == 'copy-assets') {
                         $copy_assets = $value;

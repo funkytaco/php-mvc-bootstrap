@@ -13,5 +13,5 @@
         //Index Page
          ['OPTIONS', null, $forbidden],
         //catchall
-        ['GET', '/[*:catchall]', function() { return 'NULL'; } ],
+        ['GET', '/[*:catchall]', function() { return ''; } ],
     ];
