@@ -69,13 +69,9 @@ Any CSS/JS/media assets MUST go in public/assets
     └── index.php
 
 
-
-
-
-
-
 Source directory:
 This is the core of our MVC framework.
+
     src
     ├── Bootstrap.php
     ├── Dependencies.php
