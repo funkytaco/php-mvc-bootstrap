@@ -23,10 +23,11 @@ ADD .installer/.docker/supervisord.conf /etc/
 #Add project
 #ADD . /var/
 #ADD . /opt/
+ADD composer.* /opt/
 
 
 ADD .installer/.docker/composer.phar /usr/local/sbin/composer
-RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-bootstrap
+RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
 
 # Set the port to 80
 EXPOSE 80
