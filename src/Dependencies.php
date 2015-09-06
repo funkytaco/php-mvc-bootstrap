@@ -23,8 +23,8 @@ try {
 } catch (Exception $e) {
 
     if (stristr($e->getMessage(),"FilesystemLoader baseDir must be a directory") == TRUE) {
-        throw new Exception("VIEWS_DIR does not exist. To install a Bootstrap template run:\n
-        composer install-bootstrap\n");
+        throw new Exception("VIEWS_DIR does not exist. To install a default template run:\n
+        composer install-mvc\n");
     }
 }
 
