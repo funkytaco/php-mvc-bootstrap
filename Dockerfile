@@ -6,6 +6,7 @@
 # Set the base image to Ubuntu
 FROM centos:7
 VOLUME /opt
+USER root
 
 # Add the ngix and PHP dependent repository
 ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
