@@ -14,6 +14,8 @@ ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
 # Installing nginx
 RUN yum -y install nginx && yum -y --enablerepo=remi,remi-php56 install php php-fpm php-pdo php-common && yum install -y python-setuptools && easy_install pip && pip install supervisor
 
+RUN groupadd supervisor && usermod -a -G supervisor 
+
 # Adding the configuration file of the nginx
 ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
 ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
