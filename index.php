@@ -10,7 +10,7 @@
     define('CONTROLLERS_DIR', __DIR__ . './app/Controllers');
 
     define('SOURCE_DIR', __DIR__);
-    define('VENDOR_DIR', './vendor');
+    define('VENDOR_DIR', 'vendor');
     define('PUBLIC_DIR', 'public');
 
     define('CUSTOM_ROUTES_FILE', __DIR__ .'./app/CustomRoutes.php');
