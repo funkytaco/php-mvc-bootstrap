@@ -28,10 +28,10 @@ ADD composer.* /opt/
 
 
 ADD .installer/.docker/composer.phar /usr/local/sbin/composer
-RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc && chmod 760 `find / -name supervisor.sock`
+RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
 
 # Set the port to 80
 EXPOSE 80
 
 # Executing supervisord
-CMD ["supervisord", "-n"]
+CMD ["sudo supervisord", "-n"]
