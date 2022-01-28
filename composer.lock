@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "e1a7874fe304ca46043a365ee251236d",
+    "content-hash": "1e79077bd8d4b75a62c86f1a1a7a8b38",
     "packages": [
         {
             "name": "filp/whoops",
@@ -62,19 +62,19 @@
                 "whoops",
                 "zf2"
             ],
-            "time": "2015-06-29 05:42:04"
+            "time": "2015-06-29T05:42:04+00:00"
         },
         {
             "name": "klein/klein",
             "version": "v2.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/chriso/klein.php.git",
+                "url": "https://github.com/klein/klein.php.git",
                 "reference": "5dc073f05adb67ee09680545b4cc7b0590d2559e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chriso/klein.php/zipball/5dc073f05adb67ee09680545b4cc7b0590d2559e",
+                "url": "https://api.github.com/repos/klein/klein.php/zipball/5dc073f05adb67ee09680545b4cc7b0590d2559e",
                 "reference": "5dc073f05adb67ee09680545b4cc7b0590d2559e",
                 "shasum": ""
             },
@@ -118,28 +118,28 @@
                 "routing",
                 "sinatra"
             ],
-            "time": "2014-11-07 07:35:23"
+            "time": "2014-11-07T07:35:23+00:00"
         },
         {
             "name": "mustache/mustache",
-            "version": "v2.8.0",
+            "version": "v2.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/mustache.php.git",
-                "reference": "64c28cc73e01d5edcef7de8cb2b16782615f648a"
+                "reference": "579ffa5c96e1d292c060b3dd62811ff01ad8c24e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/64c28cc73e01d5edcef7de8cb2b16782615f648a",
-                "reference": "64c28cc73e01d5edcef7de8cb2b16782615f648a",
+                "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/579ffa5c96e1d292c060b3dd62811ff01ad8c24e",
+                "reference": "579ffa5c96e1d292c060b3dd62811ff01ad8c24e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "~1.6",
-                "phpunit/phpunit": "~3.7|~4.0"
+                "friendsofphp/php-cs-fixer": "~1.11",
+                "phpunit/phpunit": "~3.7|~4.0|~5.0"
             },
             "type": "library",
             "autoload": {
@@ -164,7 +164,7 @@
                 "mustache",
                 "templating"
             ],
-            "time": "2015-04-01 06:37:33"
+            "time": "2022-01-21T06:08:36+00:00"
         },
         {
             "name": "rdlowrey/auryn",
@@ -225,7 +225,7 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2015-08-12 02:24:20"
+            "time": "2015-08-12T02:24:20+00:00"
         },
         {
             "name": "semantic/ui",
@@ -262,7 +262,7 @@
                 "semantic",
                 "ui"
             ],
-            "time": "2015-08-10 18:37:43"
+            "time": "2015-08-10T18:37:43+00:00"
         },
         {
             "name": "twbs/bootstrap",
@@ -313,7 +313,7 @@
                 "responsive",
                 "web"
             ],
-            "time": "2015-01-19 17:03:09"
+            "time": "2015-01-19T17:03:09+00:00"
         }
     ],
     "packages-dev": [],
@@ -327,5 +327,6 @@
     "platform": {
         "php": ">=5.4"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
