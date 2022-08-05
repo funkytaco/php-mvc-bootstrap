@@ -14,7 +14,7 @@ use Main\Modules\Date_Module;
     *   Dependency Injecting makes testing easier!
     ***/
 
-    class IndexController implements ControllerInterface {
+    class ContactController implements ControllerInterface {
 
         private $data;
         //use DemoData;
@@ -49,17 +49,10 @@ use Main\Modules\Date_Module;
 
         public function get(Request $request, Response $response) {
             $this->data['getVar'] = $request->__get('get');
-            $html = $this->renderer->render('index', $this->data);
+            $html = $this->renderer->render('contact', $this->data);
             $response->body($html);
             return $response;
 
-        }
-
-        public function getAbout(Request $request, Response $response) {
-            return self::get($request, $response);
-        }
-        public function getContact(Request $request, Response $response) {
-            return self::get($request, $response);
         }
 
 
