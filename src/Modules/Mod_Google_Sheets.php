@@ -14,12 +14,12 @@ namespace Main\Modules;
 
             $this->spreadsheetId = $spreadsheetId;
         }
-        
+
         public function get_sheet_rows($get_range =  "A2: B10") {
             $response = $this->service->spreadsheets_values->get($this->spreadsheetId, $get_range);
             return $arrValues; 
         }
-        public function update_sheet_rows($update_range =  "A2: B10", $values = [[$arrOne, $arrTwo]]) {
+        public function update_sheet_rows($update_range =  "A2: B10", $arrValues = [[$arrOne, $arrTwo]]) {
 
             $body = new Google_Service_Sheets_ValueRange([
 
@@ -35,7 +35,4 @@ namespace Main\Modules;
             $update_sheet = $this->service->spreadsheets_values->update($this->spreadsheetId, $update_range, $body, $params);
         }
 
-        public function data() {
-            return 'data....';
-        }
     }
