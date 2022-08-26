@@ -13,6 +13,7 @@
     "require": {
         "php": ">=5.4",
         "filp/whoops": ">=1.1.3",
+        "google/apiclient": "^2.7",
         "klein/klein": ">=2.1.0",
         "mustache/mustache": ">=2.7.0",
         "rdlowrey/auryn": ">=0.14.2",
@@ -40,7 +41,9 @@
         "install-semanticui" : "Tasks\\ApplicationTasks::InstallSemanticUi",
         "unlock" : "Tasks\\ApplicationTasks::DeleteLockFile",
         "post-install-cmd": [  "Tasks\\ApplicationTasks::postInstall" ],
-        "post-update-cmd": [  "Tasks\\ApplicationTasks::postUpdate" ]
+        "post-update-cmd": [  "Tasks\\ApplicationTasks::postUpdate",
+                                "Google_Task_Composer::cleanup"
+         ]
     },
 
 
@@ -67,7 +70,10 @@
             "controllers": { "source": ".installer/semantic-ui/Controllers", "target": "app/Controllers", "isFile": false},
             "config": { "source": ".installer/semantic-ui/app.config.php", "target": "app/app.config.php", "isFile": true},
             "routes": { "source": ".installer/semantic-ui/routes/CustomRoutes.php", "target": "app/CustomRoutes.php", "isFile": true}
-        }
+        },
+        "google/apiclient-services": [
+            "Sheets"
+        ]
 
     }
 
