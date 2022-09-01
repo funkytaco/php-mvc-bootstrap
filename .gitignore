@@ -4,3 +4,4 @@ src/.lock/app.lock
 public/assets/
 app/
 *.xlsx
+**/credentials.json
