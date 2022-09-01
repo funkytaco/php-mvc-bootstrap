@@ -122,6 +122,7 @@ Change out these components for others (i.e. replace [mustache.php] with [handle
 5. Submit a pull request :D
 
 ## History
+  - v 0.9.1 Added PHPSpreadsheet to project. Opinionated, I know, but I may change it in the future. Maybe.
   - v 0.7.5 stripped out Bootstrap from master branch and moved it to a bootstrap branch.
   - v 0.7.4 PHPUnit Travis-CI tests. Callout CSS. PDO Config file added. PDO structure and file name changes. Code cleanup for Routes.php
   - v 0.7.3 Updated license. PDO wrapper changes.
