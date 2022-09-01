@@ -3,3 +3,4 @@ src/.lock/app.lock
 .DS_Store
 public/assets/
 app/
+*.xlsx
