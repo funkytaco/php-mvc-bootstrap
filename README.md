@@ -7,6 +7,10 @@ Build Status - Untracked
 ## Installation
 
 ```sh
+$ brew install composer
+```
+
+```sh
 $ composer install
 ```
 
