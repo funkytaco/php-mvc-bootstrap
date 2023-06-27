@@ -1,14 +1,14 @@
 <?php
 
-    include('Controllers/IndexController.php');
+	require 'Controllers/IndexController.php';
 
-    $mod_date = $injector->make('Main\Modules\Date_Module');
-    $IndexCtrl = new IndexController($renderer, $conn, $mod_date);
+	$mod_date  = $injector->make( 'Main\Modules\Date_Module' );
+	$IndexCtrl = new IndexController( $renderer, $conn, $mod_date );
 
-    return [
-        //Index Page
-        ['GET', '/', [$IndexCtrl, 'get']],
-        ['GET', '/about', [$IndexCtrl, 'getAbout']],
-        ['GET', '/contact', [$IndexCtrl, 'getContact']],
+	return array(
+		// Index Page
+		array( 'GET', '/', array( $IndexCtrl, 'get' ) ),
+		array( 'GET', '/about', array( $IndexCtrl, 'getAbout' ) ),
+		array( 'GET', '/contact', array( $IndexCtrl, 'getContact' ) ),
 
-    ];
+	);
