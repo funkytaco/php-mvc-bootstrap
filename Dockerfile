@@ -6,7 +6,7 @@
 # Set the base image to Ubuntu
 FROM centos:8
 USER root
-#clADD . /opt
+#ADD . /opt
 
 RUN cd /etc/yum.repos.d/ && alias ll='ls -l'
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
@@ -24,7 +24,7 @@ RUN mkdir /run/php-fpm && chown apache:apache /run/php-fpm && chmod 777 /run/php
 COPY composer.json /opt/
 
 # Adding the configuration file of the nginx
-# ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
+ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
 ADD .installer/.docker/supervisord.conf /etc/supervisord.conf
 
 
