@@ -4,34 +4,33 @@
 ############################################################
 
 # Set the base image to Ubuntu
-FROM centos:7
-VOLUME /opt
+FROM centos:8
 USER root
+#clADD . /opt
 
-# Add the ngix and PHP dependent repository
-ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
+RUN cd /etc/yum.repos.d/ && alias ll='ls -l'
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
 # Installing nginx
-RUN yum -y install nginx && yum -y --enablerepo=remi,remi-php56 install php php-fpm php-pdo php-common && yum install -y python-setuptools && easy_install pip && pip install supervisor
+RUN dnf -y install centos-release-stream && \
+dnf -y swap centos-{linux,stream}-repos && \
+dnf -y distro-sync
+RUN dnf -y install curl nginx php php-cli php-common php-gd php-json php-pdo php-xml php-zip python3 python3-pip python3-setuptools \
+&& python3 -m pip install supervisor
+
+RUN mkdir /run/php-fpm && chown apache:apache /run/php-fpm && chmod 777 /run/php-fpm
+
+COPY composer.json /opt/
 
 # Adding the configuration file of the nginx
-ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
-ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
-
-# Adding the configuration file of the Supervisor
-ADD .installer/.docker/supervisord.conf /etc/
-
-#Add project
-#ADD . /var/
-#ADD . /opt/
-ADD composer.* /opt/
+# ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
+ADD .installer/.docker/supervisord.conf /etc/supervisord.conf
 
 
-ADD .installer/.docker/composer.phar /usr/local/sbin/composer
-RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
 
-# Set the port to 80
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN chmod +x /usr/local/bin/composer && cd /opt/ && /usr/local/bin/composer install && /usr/local/bin/composer install-mvc
 EXPOSE 80
 
-# Executing supervisord
-CMD ["supervisord", "-n"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
