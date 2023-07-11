@@ -42,6 +42,7 @@
 
         "serve" : "Tasks\\ApplicationTasks::startDevelopmentWebServer",
         "commit" : "Tasks\\ApplicationTasks::commitToInstallerDirectory",
+        "install-mdbootstrap" : "Tasks\\ApplicationTasks::InstallMdbootstrap",
         "install-mvc" : "Tasks\\ApplicationTasks::InstallMvc",
         "install-semanticui" : "Tasks\\ApplicationTasks::InstallSemanticUi",
         "unlock" : "Tasks\\ApplicationTasks::DeleteLockFile",
@@ -54,6 +55,19 @@
 
     "extra": {
 
+        "mdb-assets": {
+            "copy-assets" : true,
+            "css": { "source": ".installer/uikits/mdb5/css", "target": "public/assets/css", "isFile": false},
+            "img": { "source": ".installer/uikits/mdb5/img", "target": "public/assets/img", "isFile": false},
+            "js": { "source": ".installer/uikits/mdb5/js", "target": "public/assets/js", "isFile": false},
+            "source": { "source": ".installer/uikits/mdb5/src", "target": "public/assets/src", "isFile": false},
+            "views": { "source": ".installer/mdb/Views", "target": "app/Views", "isFile": false},
+            "controllers": { "source": ".installer/mvc/Controllers", "target": "app/Controllers", "isFile": false},
+            "routes": { "source": ".installer/mvc/routes/CustomRoutes.php", "target": "app/CustomRoutes.php", "isFile": true},
+            "config": { "source": ".installer/mvc/app.config.php", "target": "app/app.config.php", "isFile": true},
+            "lockFile": { "source": ".installer/app.lock", "target": "src/.lock/app.lock", "isFile": true}
+
+        },
         "mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "public/assets/bootstrap/dist", "isFile": false},
@@ -67,6 +81,7 @@
             "lockFile": { "source": ".installer/app.lock", "target": "src/.lock/app.lock", "isFile": true}
 
         },
+
         "semanticui-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/semantic/ui/dist", "target": "public/assets/semantic/ui/dist", "isFile": false},

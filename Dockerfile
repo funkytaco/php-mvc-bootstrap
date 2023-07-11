@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite
 RUN rm -rf html && ln -s public html 
-RUN COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install --ignore-platform-reqs && COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install-mvc
+RUN COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install --ignore-platform-reqs && COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install-mdbootstrap
 
 
 # Expose port 80
