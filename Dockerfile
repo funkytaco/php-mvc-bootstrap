@@ -1,36 +1,59 @@
-############################################################
-# Dockerfile to build CentOS,Nginx installed  Container
-# Based on CentOS
-############################################################
+FROM php:7.4-apache
+#Debian....
+# Install Composer
+COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
 
-# Set the base image to Ubuntu
-FROM centos:8
-USER root
-#ADD . /opt
+# Set working directory
+WORKDIR /var/www
 
-RUN cd /etc/yum.repos.d/ && alias ll='ls -l'
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+# Copy application files
+COPY . .
 
-# Installing nginx
-RUN dnf -y install centos-release-stream && \
-dnf -y swap centos-{linux,stream}-repos && \
-dnf -y distro-sync
-RUN dnf -y install curl nginx php php-cli php-common php-gd php-json php-pdo php-xml php-zip python3 python3-pip python3-setuptools \
-&& python3 -m pip install supervisor
+# Install dependencies
+#RUN docker-php-ext-enable php-zip
+# RUN apt-get update && \
+#     apt-get install vim git -y
+# RUN docker-php-ext-install mysqli mysqlnd pdo pdo_mysql zip 
 
-RUN mkdir /run/php-fpm && chown apache:apache /run/php-fpm && chmod 777 /run/php-fpm
+RUN apt-get update && apt-get install -y \
+        libicu-dev \
+        libbz2-dev \
+        libjpeg-dev \
+        libmemcached-dev \
+        libpng-dev \
+        libwebp-dev \ 
+        libmcrypt-dev \
+        libreadline-dev \
+        libfreetype6-dev \
+        zlib1g-dev \
+        libxml2-dev \
+        libz-dev \
+        libssl-dev \
+        libzip-dev \
+        libonig-dev \
+        libpq-dev \
+        zip \
+        curl \
+        unzip \
+        git \
+        sudo \
+        g++\
+        vim \
+        nano \
+        supervisor \
+        jpegoptim \ 
+        optipng \
+        pngquant \
+        gifsicle \
+        && rm -rf /var/lib/apt/lists/*
 
-COPY composer.json /opt/
-
-# Adding the configuration file of the nginx
-ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
-ADD .installer/.docker/supervisord.conf /etc/supervisord.conf
+RUN a2enmod rewrite
+RUN rm -rf html && ln -s public html 
+RUN COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install --ignore-platform-reqs && COMPOSER_ALLOW_SUPERUSER=1 /usr/bin/composer install-mvc
 
 
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN chmod +x /usr/local/bin/composer && cd /opt/ && /usr/local/bin/composer install && /usr/local/bin/composer install-mvc
+# Expose port 80
 EXPOSE 80
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
+# Start Apache web server
+CMD ["apache2-foreground"]
