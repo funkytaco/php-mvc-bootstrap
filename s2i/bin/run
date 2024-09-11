@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+# Start PHP built-in server
+exec php -S 0.0.0.0:8082 -t /opt/app-root/public
