@@ -182,6 +182,7 @@ class ApplicationTasks {
 
         }
 
+       	echo self::ansiFormat('MKDIR>', $destination);
         mkdir($destination, 0755, true);
 
         foreach (

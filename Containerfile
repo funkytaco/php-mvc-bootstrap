@@ -1,25 +1,36 @@
-FROM privatehub/ubi8/ubi
-#begin
-#ADD _build .
-#COPY _build/configs/automationhub-root.crt /usr/share/pki/ca-trust-source/anchors
-#RUN update-ca-trust
-#end
+FROM ubi9/php-81
+LABEL maintainer="lgonzal@redhat.com"
+WORKDIR /opt/app-root/
+USER root
 
-RUN dnf -y install curl nginx php php-cli php-common php-gd php-json php-pdo php-xml php-zip python3 python3-pip python3-setuptools \
-&& python3 -m pip install supervisor
+COPY ApplicationTasks.php /opt/app-root/
+COPY .installer /opt/app-root/.installer
+COPY vendor /opt/app-root/vendor/
+COPY src /opt/app-root/src/
+COPY composer.json /opt/app-root/
+ADD public /opt/app-root/public/
 
-RUN mkdir /run/php-fpm && chown apache:apache /run/php-fpm && chmod 777 /run/php-fpm
+# Add S2I scripts
+LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
-COPY composer.json /opt/
+# Install the dependencies
+RUN TEMPFILE=$(mktemp) && \
+    curl -o "$TEMPFILE" "https://getcomposer.org/installer" && \
+    php <"$TEMPFILE" && \
+    ./composer.phar install --ignore-platform-reqs --optimize-autoloader && ./composer.phar install-mvc
 
-# Adding the configuration file of the nginx
-ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
-ADD .installer/.docker/supervisord.conf /etc/supervisord.conf
+#RUN /usr/libexec/s2i/assemble
+COPY ./s2i/bin/ /usr/libexec/s2i
 
-COPY --from=docker.io/composer/composer /usr/bin/composer /usr/local/bin/composer
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN chmod +x /usr/local/bin/composer && cd /opt/ && /usr/local/bin/composer install --ignore-platform-reqs && /usr/local/bin/composer install-mvc
-
+#RUN /usr/libexec/s2i/assemble
 EXPOSE 8082
-
-CMD ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
+# Run script uses standard ways to configure the PHP application
+# and execs httpd -D FOREGROUND at the end
+# See more in <version>/s2i/bin/run in this repository.
+# Shortly what the run script does: The httpd daemon and php needs to be
+# configured, so this script prepares the configuration based on the container
+# parameters (e.g. available memory) and puts the configuration files into
+# the approriate places.
+# This can obviously be done differently, and in that case, the final CMD
+# should be set to "CMD httpd -D FOREGROUND" instead.
+CMD ["/usr/libexec/s2i/run"]

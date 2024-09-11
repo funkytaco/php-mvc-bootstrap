@@ -2,20 +2,23 @@ version: '3'
 
 services:
   php-mvc:
-    image: privatehub/php-mvc/php-mvc
-    #build:
-      #context: .
+    image: oriskiany.house.gov/php-mvc/php-mvc
+    build:
+      context: .
+      dockerfile: Containerfile
       # Add: 
       #   - ./_build:/_build
       #   - ./.installer/.docker/nginx.conf:/etc/nginx/nginx.conf
       #   - ./.installer/.docker/supervisord.conf:/etc/supervisord.conf
     ports:
       - 8082:8082
+    working_dir: /opt
     environment:
       - TZ=UTC
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082"]
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8082"]
       interval: 30s
       timeout: 10s
       retries: 5
-    command: ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
+    #command: ["php", "-S", "0.0.0.0:8082", "-t", "/opt/app-root/public"]
+    command: ["/usr/libexec/s2i/run"]

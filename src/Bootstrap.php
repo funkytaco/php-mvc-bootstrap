@@ -8,9 +8,8 @@
     define('MODELS_DIR', __DIR__ . '/../app/Models');
     define('VIEWS_DIR', __DIR__ . '/../app/Views');
     define('CONTROLLERS_DIR', __DIR__ . '/../app/Controllers');
-
     define('SOURCE_DIR', __DIR__);
-    define('VENDOR_DIR', '/../vendor');
+    define('VENDOR_DIR', '../vendor');
     define('PUBLIC_DIR', 'public');
 
     define('CUSTOM_ROUTES_FILE', __DIR__ .'/../app/CustomRoutes.php');
@@ -18,14 +17,13 @@
     define('DEPENDENCIES_FILE', SOURCE_DIR . '/Dependencies.php');
     define('MIMETYPES_FILE', SOURCE_DIR . '/MimeTypes.php');
 
-    $autoload_vendor_files = __DIR__ . VENDOR_DIR .'/autoload.php';
+    $autoload_vendor_files = __DIR__ .'/'. VENDOR_DIR .'/autoload.php';
 
     if (is_file($autoload_vendor_files)) {
         require $autoload_vendor_files;
     } else {
-        exit('<b>vendor</b> directory not found. Please see README.md for install instructions, or simply try running <b>composer install</b>.');
+        exit('Unable to load '. $autoload_vendor_files .'<b>vendor</b> directory '. VENDOR_DIR .' not found. Current Dir: '. __DIR__ .' Please see README.md for install instructions, or simply try running <b>composer install</b>.');
     }
-
 
     /**
     * Error Handler
