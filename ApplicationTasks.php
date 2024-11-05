@@ -182,6 +182,7 @@ class ApplicationTasks {
 
         }
 
+       	echo self::ansiFormat('MKDIR>', $destination);
         mkdir($destination, 0755, true);
 
         foreach (
@@ -258,6 +259,12 @@ class ApplicationTasks {
         } else {
             return false;
         }
+    }
+
+    public static function InstallMdbootstrap(Event $event) {
+        if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
+        echo self::ansiFormat('RUNNING>', 'Installing MD Bootstrap 5 Template...');
+        self::copy_extra_assets('mdb-assets', $event);
     }
 
     public static function InstallMvc(Event $event) {
