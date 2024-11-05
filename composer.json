@@ -22,7 +22,7 @@
         "klein/klein": ">=2.1.0",
         "mustache/mustache": ">=2.7.0",
         "rdlowrey/auryn": ">=0.14.2",
-        "twbs/bootstrap": "3.3.2@dev",
+        "twbs/bootstrap": "5.0.0@dev",
         "semantic/ui": "^2.0"
 
     },
