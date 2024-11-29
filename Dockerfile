@@ -1,37 +1,55 @@
-############################################################
-# Dockerfile to build CentOS,Nginx installed  Container
-# Based on CentOS
-############################################################
+FROM composer:latest AS composer
 
-# Set the base image to Ubuntu
-FROM centos:7
+FROM php:7.4-apache
 VOLUME /opt
 USER root
 
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip
+
+RUN docker-php-ext-install \
+    pdo_mysql \
+    zip
+
+# Copy the Composer binary from the Composer image (Stage 1) to the PHP image (Stage 2)
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Verify Composer installation
+RUN composer --version
+
+COPY . /var/www/
+
+RUN chown -R www-data:www-data /var/www/html \
+    && a2enmod rewrite
+
 # Add the ngix and PHP dependent repository
-ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
+#ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
 
 # Installing nginx
-RUN yum -y install nginx && yum -y --enablerepo=remi,remi-php56 install php php-fpm php-pdo php-common && yum install -y python-setuptools && easy_install pip && pip install supervisor
+#RUN yum -y install nginx && yum -y --enablerepo=remi,remi-php56 install php php-fpm php-pdo php-common && yum install -y python-setuptools && easy_install pip && pip install supervisor
 
 # Adding the configuration file of the nginx
-ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
-ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
+# ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
+# ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
 
 # Adding the configuration file of the Supervisor
-ADD .installer/.docker/supervisord.conf /etc/
+# ADD .installer/.docker/supervisord.conf /etc/
 
-#Add project
-#ADD . /var/
-#ADD . /opt/
-ADD composer.* /opt/
+# #Add project
+# ADD composer.* /opt/
 
 
-ADD .installer/.docker/composer.phar /usr/local/sbin/composer
-RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
+# ADD .installer/.docker/composer.phar /usr/local/sbin/composer
+# RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
+WORKDIR /var/www/
+RUN composer install-mvc
 
-# Set the port to 80
+# # Set the port to 80
+# EXPOSE 80
+
+# # Executing supervisord
+# CMD ["supervisord", "-n"]
 EXPOSE 80
-
-# Executing supervisord
-CMD ["supervisord", "-n"]
+CMD ["apache2-foreground"]
