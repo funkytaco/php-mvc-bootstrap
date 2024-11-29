@@ -21,3 +21,7 @@ composer serve
 Starting PHP Development Server...
 Host: localhost
 Port: 3000`
+
+#Development workflow
+Local development is done in app/ folder. This is NOT the same path used in the container environment.
+NOTE: Your changes are not saved until you use `composer commit`
