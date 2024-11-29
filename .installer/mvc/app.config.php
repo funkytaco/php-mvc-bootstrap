@@ -23,7 +23,7 @@
     /** Required settings - Do Not Modify **/
     $arrRequiredSettings = [
         'name' => 'Bootstrap',
-        'installer-name' => 'bootstrap',
+        'installer-name' => 'mvc',
         'views' => 'Views',
         'controllers' => 'Controllers',
         'requires' => ['date_module']
