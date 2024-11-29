@@ -71,7 +71,7 @@ class ApplicationTasks {
         //$timeout = $event->getComposer()->getConfig()->get('process-timeout');
         $port = 3000;
         echo self::ansiFormat('INFO','Starting webserver on port '. $port);
-        echo exec('php -S localhost:'. $port .' public/index.php');
+        echo exec('php -S localhost:'. $port .' html/index.php');
 
     }
 
