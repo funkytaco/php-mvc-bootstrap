@@ -66,12 +66,51 @@ class ApplicationTasks {
         return $ansi_type_start . "[$type] " . $ansi_end . $ansi_start .  $str . $ansi_end . PHP_EOL;
     }
 
-    public static function startDevelopmentWebServer($event) {
+    public static function startDevelopmentWebServerOld($event) {
 
         //$timeout = $event->getComposer()->getConfig()->get('process-timeout');
         $port = 3000;
         echo self::ansiFormat('INFO','Starting webserver on port '. $port);
         echo exec('php -S localhost:'. $port .' html/index.php');
+
+    }
+
+    public static function startDevelopmentWebServer($event) {
+        $port = 3000;
+        $host = 'localhost';
+        $docRoot = __DIR__ . '/html';
+        $routerScript = __DIR__ . '/local_dev_router.php';
+
+        // Ensure router.php exists
+        // if (!file_exists($routerScript)) {
+        //     // Create a basic router if it doesn't exist
+        //     file_put_contents($routerScript, '<?php
+        // if (php_sapi_name() === "cli-server") {
+        //     $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        //     $file = __DIR__ . $path;
+        //     if (file_exists($file) && is_file($file)) {
+        //         return false;
+        //     }
+        // }
+        // require_once __DIR__ . "/index.php";
+        // ');
+        // }
+
+        echo "Starting PHP Development Server...\n";
+        echo "Host: {$host}\n";
+        echo "Port: {$port}\n";
+        echo "Document Root: {$docRoot}\n";
+
+        // Start the PHP built-in web server
+        $command = sprintf(
+            'php -S %s:%d -t %s %s',
+            $host,
+            $port,
+            $docRoot,
+            $routerScript
+        );
+
+        passthru($command);
 
     }
 
