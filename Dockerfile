@@ -1,7 +1,6 @@
 FROM composer:latest AS composer
 
 FROM php:7.4-apache
-VOLUME /opt
 USER root
 
 RUN apt-get update && apt-get install -y \
@@ -24,25 +23,6 @@ COPY . /var/www/
 RUN chown -R www-data:www-data /var/www/html \
     && a2enmod rewrite
 
-# Add the ngix and PHP dependent repository
-#ADD .installer/.docker/nginx.repo /etc/yum.repos.d/nginx.repo
-
-# Installing nginx
-#RUN yum -y install nginx && yum -y --enablerepo=remi,remi-php56 install php php-fpm php-pdo php-common && yum install -y python-setuptools && easy_install pip && pip install supervisor
-
-# Adding the configuration file of the nginx
-# ADD .installer/.docker/nginx.conf /etc/nginx/nginx.conf
-# ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
-
-# Adding the configuration file of the Supervisor
-# ADD .installer/.docker/supervisord.conf /etc/
-
-# #Add project
-# ADD composer.* /opt/
-
-
-# ADD .installer/.docker/composer.phar /usr/local/sbin/composer
-# RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-mvc
 WORKDIR /var/www/
 RUN composer install-mvc
 
