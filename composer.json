@@ -17,7 +17,7 @@
         "klein/klein": "^2.1.2",
         "mustache/mustache": "^2.14",
         "phpoffice/phpspreadsheet": "^1.29",
-        "rdlowrey/auryn": "^1.4.4",
+        "php-di/php-di": "^7.0",
         "twbs/bootstrap": "5.0.0@dev",
         "semantic/ui": "^2.0"
     },

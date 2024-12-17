@@ -26,8 +26,24 @@ if (is_file($autoload_vendor_files)) {
     exit('<b>vendor</b> directory not found. Please see README.md for install instructions, or simply try running <b>composer install</b>.');
 }
 
-// Load PHP 8 compatibility layer
-require_once __DIR__ . '/PHP8Compatibility.php';
+// Add PHP 8 compatibility patch for Klein
+if (!class_exists('ReturnTypeWillChange')) {
+    #[\Attribute]
+    class ReturnTypeWillChange {
+        public function __construct() {}
+    }
+}
+
+// Add the ReturnTypeWillChange attribute to Klein's DataCollection
+if (!method_exists('Klein\DataCollection\DataCollection', 'getIterator')) {
+    class_alias('Klein\DataCollection\DataCollection', 'Klein\DataCollection\DataCollectionOriginal');
+    class DataCollection extends \Klein\DataCollection\DataCollectionOriginal {
+        #[\ReturnTypeWillChange]
+        public function getIterator() {
+            return parent::getIterator();
+        }
+    }
+}
 
 /**
 * Error Handler
@@ -44,12 +60,6 @@ if (ENV !== 'production') {
 $whoops->register();
 
 /**
-* Dependency Injector
-* $injector
-*/
-$injector = include(DEPENDENCIES_FILE);
-
-/**
 * App Configuration - these are imported via the .installer directory
 */
 if (is_file(CONFIG_FILE)) {
@@ -59,42 +69,38 @@ if (is_file(CONFIG_FILE)) {
 }
 
 /**
-* Pass $injector PDO configuration
+* Dependency Container
+* $container
 */
-$injector->define('\Main\PDO', [
-  ':dsn' => $config['pdo']['dsn'],
-  ':username' => $config['pdo']['username'],
-  ':passwd' => $config['pdo']['password'],
-  ':options' => $config['pdo']['options']
-]);
+$container = include(DEPENDENCIES_FILE);
 
 /**
 * Mock Database PDO
 * $conn
 */
-$conn = $injector->make('\Main\Mock\PDO'); //comment out to use PDO $conn below
+$conn = $container->get('\Main\Mock\PDO');
 
 /**
 * Templating Engine
 * $renderer
 */
-$renderer = $injector->make('Main\Renderer\Renderer');
+$renderer = $container->get('Main\Renderer\Renderer');
 
 /**
 * HTTP Request/Response Handlers
 * $request - Request Handler
 * $response - Response Handler
 */
-$request = $injector->make('\Klein\Request');
-$response = $injector->make('\Klein\Response');
+$request = $container->get('\Klein\Request');
+$response = $container->get('\Klein\Response');
 
 /**
 * App Router
 * $router
 */
-$router = $injector->make('\Klein\Klein');
+$router = $container->get('\Klein\Klein');
 
-/**** end injector includes ***/
+/**** end container includes ***/
 
 /**
 * build $routes for the router. This will change depending on
@@ -112,6 +118,7 @@ if (gettype($routes) == 'array') {
         }
     }
 }
+
 // Load custom routes if they exist
 if (is_file(CUSTOM_ROUTES_FILE)) {
     $custom_routes = include(CUSTOM_ROUTES_FILE);
@@ -121,18 +128,6 @@ if (is_file(CUSTOM_ROUTES_FILE)) {
         }
     }
 }
-// Add PHP 8 compatibility patch for Klein
-// if (!function_exists('klein_php8_patch')) {
-//     function klein_php8_patch() {
-//         if (!class_exists('ReturnTypeWillChange')) {
-//             class ReturnTypeWillChange extends \Attribute
-//             {
-//                 public function __construct() {}
-//             }
-//         }
-//     }
-//     klein_php8_patch();
-// }
 
 // Dispatch routes
 $router->dispatch();
