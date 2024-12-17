@@ -11,31 +11,25 @@
         }
     ],
     "require": {
-        "php": "^7.4.30",
-        "filp/whoops": ">=1.1.3",
-        "google/apiclient": "^2.7",
+        "php": "^8.2",
+        "filp/whoops": "^2.15",
+        "google/apiclient": "^2.15",
         "klein/klein": "^2.1.2",
-        "mustache/mustache": ">=2.7.0",
-        "phpoffice/phpspreadsheet": "^1.23",
-        "rdlowrey/auryn": ">=0.14.2",
+        "mustache/mustache": "^2.14",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "rdlowrey/auryn": "^1.4.4",
         "twbs/bootstrap": "5.0.0@dev",
         "semantic/ui": "^2.0"
-
     },
     "require-dev": {
     },
-
     "autoload": {
         "psr-4": {
             "Main\\": "src/",
             "Tasks\\" : "."
-
         }
     },
-
-
     "scripts": {
-
         "serve" : "Tasks\\ApplicationTasks::startDevelopmentWebServer",
         "commit" : "Tasks\\ApplicationTasks::commitToInstallerDirectory",
         "install-mvc" : "Tasks\\ApplicationTasks::InstallMvc",
@@ -46,10 +40,7 @@
                                 "Google_Task_Composer::cleanup"
          ]
     },
-
-
     "extra": {
-
         "mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
@@ -61,7 +52,6 @@
             "config": { "source": ".installer/mvc/app.config.php", "target": "app/app.config.php", "isFile": true},
             "dashboard-css": { "source": "vendor/twbs/bootstrap/docs/examples/dashboard", "target": "html/assets/css/themes", "isFile": false},
             "lockFile": { "source": ".installer/app.lock", "target": "src/.lock/app.lock", "isFile": true}
-
         },
         "semanticui-assets": {
             "copy-assets" : true,
@@ -75,7 +65,5 @@
         "google/apiclient-services": [
             "Sheets"
         ]
-
     }
-
 }

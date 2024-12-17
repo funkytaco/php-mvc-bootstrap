@@ -42,7 +42,6 @@ class ApplicationTasks {
 
     private static function ansiFormat($type = 'INFO', $str) {
         $types = array(
-
             'INFO' => self::$foreground['white'],
             'NOTICE' => self::$foreground['yellow'],
             'CONFIRM: Y/N' => self::$background['magenta'],
@@ -55,55 +54,37 @@ class ApplicationTasks {
             'RUNNING>' => self::$foreground['white'],
             'COPYING>' => self::$foreground['white'],
             'MKDIR>' => self::$foreground['white']
-
         );
 
         $ansi_start = "\033[". $types[$type] ."m";
         $ansi_end = "\033[0m";
         $ansi_type_start = "\033[". $types['INFO'] ."m";
 
-
         return $ansi_type_start . "[$type] " . $ansi_end . $ansi_start .  $str . $ansi_end . PHP_EOL;
     }
 
-    public static function startDevelopmentWebServerOld($event) {
-
-        //$timeout = $event->getComposer()->getConfig()->get('process-timeout');
-        $port = 3000;
-        echo self::ansiFormat('INFO','Starting webserver on port '. $port);
-        echo exec('php -S localhost:'. $port .' html/index.php');
-
-    }
-
-    public static function startDevelopmentWebServer($event) {
+    public static function startDevelopmentWebServer(Event $event) {
         $port = 3000;
         $host = 'localhost';
         $docRoot = __DIR__ . '/html';
         $routerScript = __DIR__ . '/local_dev_router.php';
-
-        // Ensure router.php exists
-        // if (!file_exists($routerScript)) {
-        //     // Create a basic router if it doesn't exist
-        //     file_put_contents($routerScript, '<?php
-        // if (php_sapi_name() === "cli-server") {
-        //     $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-        //     $file = __DIR__ . $path;
-        //     if (file_exists($file) && is_file($file)) {
-        //         return false;
-        //     }
-        // }
-        // require_once __DIR__ . "/index.php";
-        // ');
-        // }
+        
+        // Use PHP 8.2 if available
+        $php_binary = '/opt/homebrew/opt/php@8.2/bin/php';
+        if (!file_exists($php_binary)) {
+            $php_binary = 'php'; // fallback to default PHP
+        }
 
         echo "Starting PHP Development Server...\n";
         echo "Host: {$host}\n";
         echo "Port: {$port}\n";
         echo "Document Root: {$docRoot}\n";
+        echo "Using PHP binary: {$php_binary}\n";
 
         // Start the PHP built-in web server
         $command = sprintf(
-            'php -S %s:%d -t %s %s',
+            '%s -S %s:%d -t %s %s',
+            $php_binary,
             $host,
             $port,
             $docRoot,
@@ -111,7 +92,6 @@ class ApplicationTasks {
         );
 
         passthru($command);
-
     }
 
     private static function lock_file_exists() {
@@ -131,35 +111,27 @@ class ApplicationTasks {
     }
 
     private static function delete_assets_recursive($dir) {
-
         $files = array_diff(scandir($dir), array('.','..'));
-
         foreach ($files as $file) {
             (is_dir("$dir/$file")) ? self::delete_assets_recursive("$dir/$file") : unlink("$dir/$file");
         }
-
         return rmdir($dir);
     }
 
-
     private static function copy_extra_assets($strAssetKey, Event $event) {
-            $bAppIsLocked = self::lock_file_exists();
+        $bAppIsLocked = self::lock_file_exists();
 
-            switch($bAppIsLocked) {
-
-                case TRUE:
+        switch($bAppIsLocked) {
+            case TRUE:
                 echo self::ansiFormat('ERROR', $strAssetKey . ' app.lock file exists. Please backup your code before deleting the app.lock file and running the installer.');
                 break;
-                case FALSE:
+            case FALSE:
                 echo self::ansiFormat('RUNNING>', $strAssetKey . ' Post-Install Tasks');
                 $extra = $event->getComposer()->getPackage()->getExtra();
 
                 if(is_array($extra)) {
-
                     if(array_key_exists($strAssetKey, $extra)) {
-
                         foreach($extra[$strAssetKey] as $key => $value) {
-
                             if ($key == 'copy-assets') {
                                 $copy_assets = $value;
                                 continue;
@@ -171,21 +143,40 @@ class ApplicationTasks {
                                 self::copyAssets($arrAsset['source'] , $arrAsset['target'], $arrAsset['isFile'], $event);
                             }
                         }
-
                     } else {
-                        echo self::ansiFormat('ERROR', 'Invalid asset key ('. $strAssetKey .'). Check the extras section of your composer.json file
-                        for the correct key name.');
+                        echo self::ansiFormat('ERROR', 'Invalid asset key ('. $strAssetKey .'). Check the extras section of your composer.json file for the correct key name.');
                     }
                 }
+        }
+    }
+
+    private static function copyAssets($source, $destination, $isFile, $event) {
+        if ($isFile == TRUE) {
+            echo self::ansiFormat('RUNNING>', 'copy Assets for: '. $source);
+            touch($destination);
+
+            if(!is_file($destination)) {
+                self::copy_assets_recursive($source, $destination, $event);
+            } else {
+                copy($source, $destination);
+            }
+        } else {
+            try {
+                if (self::copy_assets_recursive($source, $destination, $event) == true) {
+                    echo self::ansiFormat('SUCCESS', 'Copied assets from "'.realpath($source).'" to "'.realpath($destination).'".'.PHP_EOL);
+                } else {
+                    echo self::ansiFormat('ERROR', 'Copy failed! Unable to copy assets from "'.realpath($source).'" to "'.realpath($destination).'"');
+                }
+            } catch(Exception $e) {
+                echo self::ansiFormat('ERROR', 'Copy failed! Unable to copy assets from "'.realpath($source).'" to "'.realpath($destination).'"');
             }
         }
-
+    }
 
     private static function copy_assets_recursive($source, $destination, $event) {
         echo self::ansiFormat('INFO', 'DESTINATION TYPE: '. is_dir($destination) ? "DIR" : "FILE" );
         echo self::ansiFormat('INFO', 'SOURCE DIR: '. $source);
         echo self::ansiFormat('INFO', 'DESTINATION DIR: '. $destination);
-
 
         if (!file_exists($source) || $destination ==  __DIR__ . '/public/assets/') {
             return false;
@@ -210,23 +201,22 @@ class ApplicationTasks {
                 echo(self::ansiFormat('EXITING', 'Cowardly refusing to delete destination path: '. $destination));
                 echo(self::ansiFormat('INFO', 'Attempting simple copy.'));
                 copy($source, $destination);
-
             } else {
                 if ($io->askConfirmation(self::ansiFormat('CONFIRM: Y/N', 'Delete target directory?'), false)) {
-                    self::delete_assets_recursive($destination); //Destructive! Your destination must be correct!
+                    self::delete_assets_recursive($destination);
                 } else {
-                        exit(self::ansiFormat('EXITING', 'Cancelled Bootstrap Post-Install Tasks'));
+                    exit(self::ansiFormat('EXITING', 'Cancelled Bootstrap Post-Install Tasks'));
                 }
             }
-
         }
 
         mkdir($destination, 0755, true);
 
         foreach (
-        $directoryPath = new \RecursiveIteratorIterator(
-        new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
-        \RecursiveIteratorIterator::SELF_FIRST) as $file
+            $directoryPath = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::SELF_FIRST
+            ) as $file
         ) {
             if ($file->isDir()) {
                 echo self::ansiFormat('MKDIR>', $file);
@@ -243,9 +233,9 @@ class ApplicationTasks {
     public static function postUpdate(Event $event) {
         echo self::ansiFormat('RUNNING>', 'Post-Update Tasks');
     }
+
     public static function postInstall(Event $event) {
         echo self::ansiFormat('NOTICE', 'Available Post-Install Tasks:');
-        //begin
         $extra = $event->getComposer()->getPackage()->getScripts();
 
         if(is_array($extra)) {
@@ -253,15 +243,12 @@ class ApplicationTasks {
                 echo "composer ". $installer .PHP_EOL;
             }
         }
-        //end
     }
 
     public static function commitToInstallerDirectory(Event $event) {
-
         echo self::ansiFormat('RUNNING>', 'Commit To Installer Directory...');
         $settings = include('app/app.config.php');
 
-        /** todo: add more sanity checks **/
         if ($settings['views']) {
             $source =  "app/". $settings['views'];
             $destination = '.installer/'. $settings['installer-name'] .'/'. $settings['views'];
@@ -275,8 +262,6 @@ class ApplicationTasks {
             $isFile = FALSE;
             echo self::copyAssets($source, $destination, $isFile, $event);
         }
-
-
     }
 
     private static function list_directory_files($path, $event) {
@@ -309,39 +294,6 @@ class ApplicationTasks {
         if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
         echo self::ansiFormat('RUNNING>', 'Installing Semantic UI Template...');
         self::copy_extra_assets('semanticui-assets', $event);
-
-    }
-
-    public static function copyAssets($source, $destination, $isFile, $event) {
-
-
-    if ($isFile == TRUE) {
-        echo self::ansiFormat('RUNNING>', 'copy Assets for: '. $source);
-        touch($destination);
-
-            if(!is_file($destination)) {
-                self::copy_assets_recursive($source, $destination, $event);
-            } else {
-                copy($source, $destination);
-            }
-
-
-    } else {
-        try {
-
-            if (self::copy_assets_recursive($source, $destination, $event) == true) {
-                    echo self::ansiFormat('SUCCESS', 'Copied assets from "'.realpath($source).'" to "'.realpath($destination).'".'.PHP_EOL);
-                } else {
-                    echo self::ansiFormat('ERROR', 'Copy failed! Unable to copy assets from "'.realpath($source)
-                    .'" to "'.realpath($destination).'"');
-            }
-
-        } catch(Exception $e) {
-            echo self::ansiFormat('ERROR', 'Copy failed! Unable to copy assets from "'.realpath($source)
-            .'" to "'.realpath($destination).'"');
-        }
-    }
-
     }
 
     public static function postPackageReinstallBootstrap(Event $event) {
@@ -353,15 +305,12 @@ class ApplicationTasks {
     }
 
     private static function copy_assets_for_package(PackageEvent $event) {
-
         echo self::ansiFormat('RUNNING>', 'Bootstrap Post-Install Tasks');
         $extra = $event->getComposer()->getPackage()->getExtra();
 
         if(is_array($extra)) {
             if(array_key_exists('mvc-assets', $extra)) {
-
                 foreach($extra['mvc-assets'] as $key => $value) {
-
                     if ($key == 'copy-assets') {
                         $copy_assets = $value;
                         continue;
@@ -373,7 +322,6 @@ class ApplicationTasks {
                         self::copyAssets($arrAsset['source'] , $arrAsset['target'], $event);
                     }
                 }
-
             }
         }
 
@@ -386,28 +334,18 @@ class ApplicationTasks {
 
         copy('vendor/twbs/bootstrap/docs/examples/dashboard/dashboard.css', $css_dir . 'dashboard.css');
         copy('vendor/twbs/bootstrap/docs/examples/cover/cover.css', $css_dir .'cover.css');
-
-
     }
 
     public static function postPackageInstall(PackageEvent $event) {
-
         echo self::ansiFormat('RUNNING>', 'Post-Install Tasks');
 
         $installedPackage = $event->getOperation()->getPackage();
-
         echo self::ansiFormat('INSTALL', $installedPackage);
 
         if (strstr($installedPackage,'twbs/bootstrap') == true) {
-
-          self::copy_assets_for_package($event);
-
+            self::copy_assets_for_package($event);
         } else {
-
             echo self::ansiFormat('INFO', $installedPackage);
-
         }
     }
-
-
 }
