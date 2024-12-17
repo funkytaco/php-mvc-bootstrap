@@ -6,31 +6,39 @@ use \Klein\Response;
 use \Main\Renderer\Renderer;
 use \Main\Mock\PDO;
 use Main\Modules\Date_Module;
+use Main\Modules\MCP_Module;
 
     /**
     *   NOTE that the following are injected into your controller
     *   Renderer $renderer - Template Engine
     *   PDO $conn - PDO
+    *   MCP_Module $mod_mcp
+    *   Date_Module $mod_date
     *   Dependency Injecting makes testing easier!
     ***/
 
-    class AboutController implements ControllerInterface {
+    class MCPController implements ControllerInterface {
 
         private $data;
         private Renderer $renderer;
         private PDO $conn;
+        private MCP_Module $mod_mcp;
+        private Date_Module $mod_date;
 
         public function __construct(
             Renderer $renderer,
-            PDO $conn, Date_Module $mod_date
+            PDO $conn,
+            MCP_Module $mod_mcp,
+            Date_Module $mod_date
         ) {
-
             $this->renderer = $renderer;
             $this->conn = $conn;
+            $this->mod_mcp = $mod_mcp;
+            $this->mod_date = $mod_date;
 
             $this->data = [
                     'appName' => "PHP-MVC Template",
-                    'myDateModule' => $mod_date->getDate(),
+                    'myDateModule' => $this->mod_date->getDate(),
                     'projectList' => self::getLegacyProjects()
                 ];
         }
@@ -53,8 +61,5 @@ use Main\Modules\Date_Module;
             $html = $this->renderer->render('about', $this->data);
             $response->body($html);
             return $response;
-
         }
-
-
     }

@@ -17,7 +17,8 @@ use Main\Modules\Date_Module;
     class IndexController implements ControllerInterface {
 
         private $data;
-        //use DemoData;
+        private Renderer $renderer;
+        private PDO $conn;
 
         public function __construct(
             Renderer $renderer,
