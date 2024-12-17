@@ -1,6 +1,25 @@
 <?php
-namespace Main\Modules\MCP_Module;
-//namespace MCP;
+namespace Main\Modules;
+
+class MCP_Module {
+    private $client;
+    private $server;
+    
+    public function __construct() {
+        $this->client = new MCP\Client();
+        $this->server = new MCP\Server();
+    }
+    
+    public function getClient() {
+        return $this->client;
+    }
+    
+    public function getServer() {
+        return $this->server;
+    }
+}
+
+namespace Main\Modules\MCP;
 
 class JSONRPCMessage {
     const LATEST_PROTOCOL_VERSION = "2024-11-05";

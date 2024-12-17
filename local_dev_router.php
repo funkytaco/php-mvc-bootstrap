@@ -9,7 +9,7 @@ require_once __DIR__ . '/src/PHP8Compatibility.php';
 
 // Set error reporting
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 // Handle static files directly
 if (preg_match('/\.(?:css|eot|js|json|less|jpg|bmp|png|svg|ttf|woff|woff2|md)$/', $_SERVER["REQUEST_URI"])) {
