@@ -42,6 +42,11 @@
         "mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
+            "examples": { "source": "vendor/twbs/bootstrap/site/content/docs/5.3/examples/cheatsheet", "target": "html/assets/bootstrap/dist", "isFile": false },
+            "assets": { "source": "vendor/twbs/bootstrap/site/static/docs/5.3/assets", "target": "html/docs/5.3/docs/assets", "isFile": false },
+            "newdoc-assets": { "source": "vendor/twbs/bootstrap/site/static/docs/5.3/assets", "target": "html/docs/5.3/docs/assets", "isFile": false },
+            "newjs": { "source": "vendor/twbs/bootstrap/dist/js", "target": "html/docs/5.3/docs/assets/js", "isFile": false },
+            "newcss": { "source": "vendor/twbs/bootstrap/dist/css", "target": "html/docs/5.3/docs/assets/css", "isFile": false },
             "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "html/assets/bootstrap/fonts", "isFile": false},
             "views": { "source": ".installer/mvc/Views", "target": "app/Views", "isFile": false},
             "controllers": { "source": ".installer/mvc/Controllers", "target": "app/Controllers", "isFile": false},

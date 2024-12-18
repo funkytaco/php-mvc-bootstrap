@@ -1,255 +1,178 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>{{appName}} - Bootstrap Template</title>
-    {{> partials/header}}
-    <link href="/assets/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    </head>
-    <body role="document">
-<br><br><br>
-        <!-- Fixed navbar -->
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Bootstrap theme</a>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold text-gray-800">{{brandName}}</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-gray-900">Home</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900">Features</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900">Documentation</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
+                    <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Download Now</a>
+                </div>
             </div>
-            <div id="navbar" class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/contact">Contact</a></li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Nav header</li>
-                    <li><a href="#">Separated link</a></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div><!--/.nav-collapse -->
-          </div>
-        </nav>
+        </div>
+    </nav>
 
-        <div class="container theme-showcase" role="main">
-
-          <!-- Main jumbotron for a primary marketing message or call to action -->
-          <div class="jumbotron">
-            <h1>Theme example - Index</h1>
-            <p>This is a template taken from <a href="http://getbootstrap.com/examples/theme/">http://getbootstrap.com/examples/theme/</a>. Use it as a starting point to create something more unique by building on or modifying it.</p>
-            <h4>As for this PHP-MVC framework, by default we use:</h4>
-        <ul>
-            <li><a href="https://github.com/twbs/bootstrap">Bootstrap</a> for front-end CSS.</li>
-            <li><a href="https://getcomposer.org/">Composer</a> for dependency management and project setup</li>
-            <li><a href="https://github.com/filp/whoops">whoops</a> for error handling</li>
-            <li><a href="https://github.com/chriso/klein.php">Klein</a> for routing</li>
-            <li><a href="https://github.com/mustache/mustache">mustache</a> for templating</li>
-            <li><a href="https://github.com/PHP-DI/PHP-DI">PHP-DI</a> for dependency injection (Auryn is now deprecated)</li>
-        </ul>
-          </div>
-
-
-          <div class="page-header">
-            <h1>Buttons</h1>
-          </div>
-          <p>
-            <button type="button" class="btn btn-lg btn-default">Default</button>
-            <button type="button" class="btn btn-lg btn-primary">Primary</button>
-            <button type="button" class="btn btn-lg btn-success">Success</button>
-            <button type="button" class="btn btn-lg btn-info">Info</button>
-            <button type="button" class="btn btn-lg btn-warning">Warning</button>
-            <button type="button" class="btn btn-lg btn-danger">Danger</button>
-            <button type="button" class="btn btn-lg btn-link">Link</button>
-          </p>
-          <p>
-            <button type="button" class="btn btn-default">Default</button>
-            <button type="button" class="btn btn-primary">Primary</button>
-            <button type="button" class="btn btn-success">Success</button>
-            <button type="button" class="btn btn-info">Info</button>
-            <button type="button" class="btn btn-warning">Warning</button>
-            <button type="button" class="btn btn-danger">Danger</button>
-            <button type="button" class="btn btn-link">Link</button>
-          </p>
-          <p>
-            <button type="button" class="btn btn-sm btn-default">Default</button>
-            <button type="button" class="btn btn-sm btn-primary">Primary</button>
-            <button type="button" class="btn btn-sm btn-success">Success</button>
-            <button type="button" class="btn btn-sm btn-info">Info</button>
-            <button type="button" class="btn btn-sm btn-warning">Warning</button>
-            <button type="button" class="btn btn-sm btn-danger">Danger</button>
-            <button type="button" class="btn btn-sm btn-link">Link</button>
-          </p>
-          <p>
-            <button type="button" class="btn btn-xs btn-default">Default</button>
-            <button type="button" class="btn btn-xs btn-primary">Primary</button>
-            <button type="button" class="btn btn-xs btn-success">Success</button>
-            <button type="button" class="btn btn-xs btn-info">Info</button>
-            <button type="button" class="btn btn-xs btn-warning">Warning</button>
-            <button type="button" class="btn btn-xs btn-danger">Danger</button>
-            <button type="button" class="btn btn-xs btn-link">Link</button>
-          </p>
-
-
-          <div class="page-header">
-            <h1>Tables</h1>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+        <div class="max-w-6xl mx-auto px-4 py-20">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-6">{{heroTitle}}</h1>
+                <p class="text-xl mb-8">{{heroSubtitle}}</p>
+                <div class="space-x-4">
+                    <a href="#" class="bg-white text-blue-500 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                        {{ctaPrimary}}
+                    </a>
+                    <a href="#" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-500">
+                        {{ctaSecondary}}
+                    </a>
+                </div>
             </div>
-            <div class="col-md-6">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">{{featuresTitle}}</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">{{feature1Title}}</h3>
+                    <p class="text-gray-600">{{feature1Description}}</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">{{feature2Title}}</h3>
+                    <p class="text-gray-600">{{feature2Description}}</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">{{feature3Title}}</h3>
+                    <p class="text-gray-600">{{feature3Description}}</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">{{feature4Title}}</h3>
+                    <p class="text-gray-600">{{feature4Description}}</p>
+                </div>
             </div>
-          </div>
+        </div>
+    </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td rowspan="2">1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@TwBootstrap</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
+    <!-- Target Audience Section -->
+    <div class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">{{targetTitle}}</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {{#targetAudience}}
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">{{title}}</h3>
+                    <p class="text-gray-600">{{description}}</p>
+                </div>
+                {{/targetAudience}}
             </div>
-            <div class="col-md-6">
-              <table class="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
+        </div>
+    </div>
+
+    <!-- Features List Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">{{featureListTitle}}</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                {{#featuresList}}
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-green-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span class="ml-3 text-lg">{{.}}</span>
+                </div>
+                {{/featuresList}}
             </div>
-          </div>
+        </div>
+    </div>
 
+    <!-- CTA Section -->
+    <div class="bg-blue-600 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">{{ctaTitle}}</h2>
+            <p class="text-xl mb-8">{{ctaDescription}}</p>
+            <a href="#" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100">
+                {{ctaButtonText}}
+            </a>
+        </div>
+    </div>
 
-
-
-
-        </div> <!-- /container -->
-
-
-
-<!-- begin footer includes //-->
-{{> partials/bootstrap-footer}}
-<!-- end footer includes //-->
-  </body>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300">
+        <div class="max-w-6xl mx-auto px-4 py-12">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">About {{brandName}}</h3>
+                    <p class="text-gray-400">{{footerDescription}}</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white">Home</a></li>
+                        <li><a href="#" class="hover:text-white">Features</a></li>
+                        <li><a href="#" class="hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white">Download</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white">API Reference</a></li>
+                        <li><a href="#" class="hover:text-white">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white">GitHub</a>
+                        <a href="#" class="hover:text-white">Twitter</a>
+                        <a href="#" class="hover:text-white">Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p>&copy; {{currentYear}} {{brandName}}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>
