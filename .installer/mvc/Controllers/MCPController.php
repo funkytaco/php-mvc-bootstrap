@@ -37,17 +37,10 @@ use Main\Modules\MCP_Module;
             $this->mod_date = $mod_date;
 
             $this->data = [
-<<<<<<< HEAD
                 'appName' => "PHP-MVC Template",
                 'myDateModule' => $this->mod_date->getDate(),
                 'projectList' => self::getLegacyProjects()
             ];
-=======
-                    'appName' => "PHP-MVC Template",
-                    'myDateModule' => $this->mod_date->getDate(),
-                    'projectList' => self::getLegacyProjects()
-                ];
->>>>>>> master
         }
 
         public function getLegacyProjects() {
@@ -55,11 +48,7 @@ use Main\Modules\MCP_Module;
             if (is_dir('Legacy')) {
                 $paths = scandir('Legacy');
                 foreach ($paths as $path) {
-<<<<<<< HEAD
                     if (is_dir('Legacy/' . $path) && $path != '.' && $path != '..') {
-=======
-                    if (is_dir('Legacy' . $path) && $path != '.' && $path != '..') {
->>>>>>> master
                         $projPaths[] = $path;
                     }
                 }
@@ -69,11 +58,7 @@ use Main\Modules\MCP_Module;
 
         public function get(Request $request, Response $response) {
             $this->data['getVar'] = $request->__get('get');
-<<<<<<< HEAD
             $html = $this->renderer->render('mcp', $this->data);
-=======
-            $html = $this->renderer->render('about', $this->data);
->>>>>>> master
             $response->body($html);
             return $response;
         }
