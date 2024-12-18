@@ -5,3 +5,4 @@ src/.lock/app.lock
 #app/
 *.xlsx
 **/credentials.json
+vendor/
