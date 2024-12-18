@@ -20,6 +20,7 @@
                 break;
                 
                 case 'json':
+                case 'map':  // Added support for .map files
                 $mimetype = 'application/json';
                 break;
                 
