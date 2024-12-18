@@ -1,7 +1,7 @@
 !.*
 src/.lock/app.lock
 .DS_Store
-public/assets/
-app/
+#public/assets/
+#app/
 *.xlsx
 **/credentials.json
