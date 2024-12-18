@@ -3,7 +3,7 @@
         'name' => 'funkytaco/php-mvc',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '1977df26d9f1f57748e5e846f8bedb52a259e1c0',
+        'reference' => 'b064d8506b5411aa826c6307a9926664f6908b30',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'funkytaco/php-mvc' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '1977df26d9f1f57748e5e846f8bedb52a259e1c0',
+            'reference' => 'b064d8506b5411aa826c6307a9926664f6908b30',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -338,9 +338,9 @@
             'dev_requirement' => false,
         ),
         'twbs/bootstrap' => array(
-            'pretty_version' => 'v5.0.0',
-            'version' => '5.0.0.0',
-            'reference' => 'bf0936748602c8109fd916c64b4560799fa1c3f8',
+            'pretty_version' => 'v5.3.3',
+            'version' => '5.3.3.0',
+            'reference' => '6e1f75f420f68e1d52733b8e407fc7c3766c9dba',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twbs/bootstrap',
             'aliases' => array(),
@@ -349,7 +349,7 @@
         'twitter/bootstrap' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => 'v5.0.0',
+                0 => 'v5.3.3',
             ),
         ),
     ),
