@@ -16,15 +16,18 @@
                 break;
 
                 case 'js':
+                case 'mjs':  // Added support for .mjs files
                 $mimetype = 'application/javascript';
                 break;
                 
                 case 'json':
-                case 'map':  // Added support for .map files
+                case 'map':  // Support for .map files
                 $mimetype = 'application/json';
                 break;
                 
                 case 'less':
+                case 'scss':  // Added support for .scss files
+                case 'yml':   // Added support for .yml files
                 $mimetype = 'text/plain';
                 break;
                 
@@ -46,6 +49,19 @@
                 
                 case 'md':
                 $mimetype = 'text/plain';
+                break;
+
+                case 'ico':  // Added support for .ico files
+                $mimetype = 'image/x-icon';
+                break;
+
+                case 'png':  // Added support for .png files
+                $mimetype = 'image/png';
+                break;
+
+                case 'jpg':  // Added support for .jpg files
+                case 'jpeg':
+                $mimetype = 'image/jpeg';
                 break;
                 
                 default:
