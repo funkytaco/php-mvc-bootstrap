@@ -39,10 +39,11 @@ $containerBuilder->addDefinitions([
                 'partials_loader' => new Mustache_Loader_FilesystemLoader(VIEWS_DIR, $options)
             ]);
         } catch (Exception $e) {
-            if (stristr($e->getMessage(), "FilesystemLoader baseDir must be a directory") === true) {
+            if (stristr($e->getMessage(), "FilesystemLoader baseDir must be a directory") !== false) {
                 throw new Exception("VIEWS_DIR does not exist. To install a default template run:\ncomposer install-mvc\n");
+            } else {
+                throw new Exception($e->getMessage());
             }
-            throw $e;
         }
     }),
 
