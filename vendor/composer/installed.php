@@ -3,7 +3,7 @@
         'name' => 'funkytaco/php-mvc',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'b064d8506b5411aa826c6307a9926664f6908b30',
+        'reference' => 'dad6ebe3b431026c80cf0a8375a7f85f5582c9e7',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'funkytaco/php-mvc' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'b064d8506b5411aa826c6307a9926664f6908b30',
+            'reference' => 'dad6ebe3b431026c80cf0a8375a7f85f5582c9e7',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

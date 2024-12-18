@@ -19,7 +19,6 @@ use Main\Modules\Date_Module;
         private $data;
         private Renderer $renderer;
         private PDO $conn;
-        private Date_Module $mod_date;
 
         public function __construct(
             Renderer $renderer,

@@ -12,7 +12,8 @@ use Main\Modules\MCP_Module;
     *   NOTE that the following are injected into your controller
     *   Renderer $renderer - Template Engine
     *   PDO $conn - PDO
-    *   MCP_Module $mod_mcp - MCP Module
+    *   MCP_Module $mod_mcp
+    *   Date_Module $mod_date
     *   Dependency Injecting makes testing easier!
     ***/
 
@@ -36,10 +37,10 @@ use Main\Modules\MCP_Module;
             $this->mod_date = $mod_date;
 
             $this->data = [
-                'appName' => "PHP-MVC Template",
-                'myDateModule' => $this->mod_date->getDate(),
-                'projectList' => self::getLegacyProjects()
-            ];
+                    'appName' => "PHP-MVC Template",
+                    'myDateModule' => $this->mod_date->getDate(),
+                    'projectList' => self::getLegacyProjects()
+                ];
         }
 
         public function getLegacyProjects() {
