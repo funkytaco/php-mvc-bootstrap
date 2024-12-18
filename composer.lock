@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00c4aca2a67fb5f654eba6e2a94a80d8",
+    "content-hash": "8279b56d7dc5d5be047307349b2e8460",
     "packages": [
         {
             "name": "ezyang/htmlpurifier",
@@ -2135,16 +2135,16 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "v5.0.0",
+            "version": "v5.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "bf0936748602c8109fd916c64b4560799fa1c3f8"
+                "reference": "6e1f75f420f68e1d52733b8e407fc7c3766c9dba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/bf0936748602c8109fd916c64b4560799fa1c3f8",
-                "reference": "bf0936748602c8109fd916c64b4560799fa1c3f8",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/6e1f75f420f68e1d52733b8e407fc7c3766c9dba",
+                "reference": "6e1f75f420f68e1d52733b8e407fc7c3766c9dba",
                 "shasum": ""
             },
             "replace": {
@@ -2179,23 +2179,15 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/bootstrap/issues",
-                "source": "https://github.com/twbs/bootstrap/tree/v5.0.0"
+                "source": "https://github.com/twbs/bootstrap/tree/v5.3.3"
             },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/bootstrap",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2021-05-05T19:32:12+00:00"
+            "time": "2024-02-20T15:14:29+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "twbs/bootstrap": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

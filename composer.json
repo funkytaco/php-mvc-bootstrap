@@ -18,10 +18,8 @@
         "mustache/mustache": "^2.14",
         "phpoffice/phpspreadsheet": "^1.29",
         "php-di/php-di": "^7.0",
-        "twbs/bootstrap": "5.0.0@dev",
+        "twbs/bootstrap": "5.3.3",
         "semantic/ui": "^2.0"
-    },
-    "require-dev": {
     },
     "autoload": {
         "psr-4": {
@@ -42,6 +40,17 @@
     },
     "extra": {
         "mvc-assets": {
+            "copy-assets" : true,
+            "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
+            "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "html/assets/bootstrap/fonts", "isFile": false},
+            "views": { "source": ".installer/mvc/Views", "target": "app/Views", "isFile": false},
+            "controllers": { "source": ".installer/mvc/Controllers", "target": "app/Controllers", "isFile": false},
+            "routes": { "source": ".installer/mvc/routes/CustomRoutes.php", "target": "app/CustomRoutes.php", "isFile": true},
+            "config": { "source": ".installer/mvc/app.config.php", "target": "app/app.config.php", "isFile": true},
+            "dashboard-css": { "source": "vendor/twbs/bootstrap//site/content/docs/5.3/examples/dashboard", "target": "html/assets/css/themes", "isFile": false},
+            "lockFile": { "source": ".installer/app.lock", "target": "src/.lock/app.lock", "isFile": true}
+        },
+        "old-mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
             "docs": { "source": "vendor/twbs/bootstrap/docs", "target": "html/assets/bootstrap/docs", "isFile": false},
