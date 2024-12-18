@@ -4,6 +4,6 @@ namespace Main\Modules;
     Class Date_Module {
 
         public function getDate() {
-            return @date('D. F n, Y');
+            return @date('D. F jS, Y');
         }
     }
