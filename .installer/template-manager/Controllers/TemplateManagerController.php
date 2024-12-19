@@ -39,6 +39,32 @@ class TemplateManagerController implements \App\ControllerInterface {
         return $response->json($template);
     }
 
+    public function previewTemplate(Request $request, Response $response) {
+        $data = json_decode($request->body(), true);
+        
+        if (!isset($data['template']) || !isset($data['variables'])) {
+            $response->code(400);
+            return $response->json(['error' => 'Missing template or variables']);
+        }
+
+        try {
+            // Convert variables array to key-value pairs for rendering
+            $templateData = [];
+            foreach ($data['variables'] as $variable) {
+                if (isset($variable['name']) && isset($variable['value'])) {
+                    $templateData[$variable['name']] = $variable['value'];
+                }
+            }
+
+            // Render the template using Mustache
+            $rendered = $this->renderer->render($data['template'], $templateData);
+            return $response->json(['rendered' => $rendered]);
+        } catch (\Exception $e) {
+            $response->code(500);
+            return $response->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function saveTemplate(Request $request, Response $response) {
         $templateData = $request->param('template');
         $templateId = $request->param('id');

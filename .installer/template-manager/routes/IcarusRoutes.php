@@ -15,5 +15,8 @@
         }],
         ['POST', '/templates/new', function($request, $response) use ($container) {
             return $container->get('Icarus\Controllers\TemplateManagerController')->createTemplate($request, $response);
+        }],
+        ['POST', '/template-manager/preview', function($request, $response) use ($container) {
+            return $container->get('Icarus\Controllers\TemplateManagerController')->previewTemplate($request, $response);
         }]
     ];

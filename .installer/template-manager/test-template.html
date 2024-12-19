@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{pageTitle}}</title>
+    <meta name="description" content="{{metaDescription}}">
+    <style>
+        {{#customStyles}}
+            {{customStyles}}
+        {{/customStyles}}
+    </style>
+</head>
+<body>
+    {{> header}}
+    
+    <nav class="{{#isActive}}active{{/isActive}}">
+        {{#navItems}}
+            <a href="{{url}}" class="{{#isActive}}active{{/isActive}}">{{label}}</a>
+        {{/navItems}}
+    </nav>
+
+    <main>
+        {{#user.isLoggedIn}}
+            <h1>Welcome, {{user.name}}!</h1>
+            <div class="notifications">
+                {{#hasNotifications}}
+                    {{> notifications/list}}
+                {{/hasNotifications}}
+            </div>
+        {{/user.isLoggedIn}}
+    </main>
+
+    {{> footer}}
+</body>
+</html>

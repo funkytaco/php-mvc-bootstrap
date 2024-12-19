@@ -232,11 +232,44 @@
                 }
             }
 
-            showPreview() {
+            async showPreview() {
                 const modal = document.getElementById('previewModal');
                 const content = document.getElementById('previewContent');
-                content.innerHTML = editor.getValue();
+                content.innerHTML = '<div class="flex justify-center items-center h-full"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>';
                 modal.classList.remove('hidden');
+                
+                try {
+                    // Get current template content and variables
+                    const templateData = {
+                        template: editor.getValue(),
+                        variables: Array.from(this.variables.values()).map(v => ({
+                            name: v.name,
+                            value: v.defaultValue,
+                            type: v.type
+                        }))
+                    };
+
+                    // Send to preview endpoint
+                    const response = await fetch('/template-manager/preview', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(templateData)
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Preview request failed');
+                    }
+
+                    const data = await response.json();
+                    content.innerHTML = data.rendered;
+                } catch (error) {
+                    console.error('Error showing preview:', error);
+                    content.innerHTML = `<div class="text-red-600 p-4">${error.message}</div>`;
+                    this.showNotification('Error generating preview', 'error');
+                }
             }
 
             hidePreview() {
