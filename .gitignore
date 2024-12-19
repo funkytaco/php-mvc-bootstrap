@@ -6,6 +6,7 @@ src/.lock/app.lock
 *.xlsx
 **/credentials.json
 vendor/
+vendor/composer/
 app/Controllers/
 app/Views/
 app/CustomRoutes.php
