@@ -95,6 +95,79 @@
                 this.currentTemplate = null;
                 this.variables = new Map();
                 this.setupEventListeners();
+                this.setupCodeMirrorEvents();
+            }
+
+            setupCodeMirrorEvents() {
+                // Listen for changes in the editor
+                editor.on('change', () => {
+                    this.detectVariables(editor.getValue());
+                });
+            }
+
+            detectVariables(content) {
+                // Regular expression to match {{variableName}} pattern
+                const variableRegex = /\{\{([^}]+)\}\}/g;
+                const foundVariables = new Set();
+                let match;
+
+                // Find all variables in the content
+                while ((match = variableRegex.exec(content)) !== null) {
+                    const varName = match[1].trim();
+                    if (!varName.includes(' ') && !varName.startsWith('>')) { // Exclude partials and invalid names
+                        foundVariables.add(varName);
+                    }
+                }
+
+                // Update variables panel
+                this.updateVariablesPanel(foundVariables);
+            }
+
+            updateVariablesPanel(foundVariables) {
+                const variablesList = document.getElementById('variablesList');
+                variablesList.innerHTML = ''; // Clear existing variables
+
+                // Add each found variable to the panel
+                foundVariables.forEach(varName => {
+                    if (!this.variables.has(varName)) {
+                        this.variables.set(varName, {
+                            name: varName,
+                            defaultValue: '',
+                            type: 'string'
+                        });
+                    }
+
+                    const varElement = document.createElement('div');
+                    varElement.className = 'flex items-center space-x-2 mb-2';
+                    varElement.innerHTML = `
+                        <input type="text" value="${varName}" readonly class="flex-1 border rounded px-2 py-1 bg-gray-100">
+                        <input type="text" placeholder="Default value" class="flex-1 border rounded px-2 py-1" 
+                            value="${this.variables.get(varName).defaultValue}"
+                            onchange="templateManager.updateVariableValue('${varName}', this.value)">
+                        <select class="border rounded px-2 py-1" 
+                            onchange="templateManager.updateVariableType('${varName}', this.value)">
+                            <option value="string" ${this.variables.get(varName).type === 'string' ? 'selected' : ''}>String</option>
+                            <option value="number" ${this.variables.get(varName).type === 'number' ? 'selected' : ''}>Number</option>
+                            <option value="boolean" ${this.variables.get(varName).type === 'boolean' ? 'selected' : ''}>Boolean</option>
+                        </select>
+                    `;
+                    
+                    variablesList.appendChild(varElement);
+                });
+            }
+
+            updateVariableValue(name, value) {
+                const variable = this.variables.get(name);
+                if (variable) {
+                    variable.defaultValue = value;
+                }
+            }
+
+            updateVariableType(name, type) {
+                const variable = this.variables.get(name);
+                if (variable) {
+                    variable.type = type;
+                }
             }
 
             setupEventListeners() {
@@ -121,7 +194,12 @@
 
                 const templateData = {
                     content: editor.getValue(),
-                    variables: Array.from(this.variables.values())
+                    name: this.currentTemplate.name,
+                    variables: Array.from(this.variables.values()).map(v => ({
+                        name: v.name,
+                        default_value: v.defaultValue,
+                        type: v.type
+                    }))
                 };
 
                 try {

@@ -60,13 +60,6 @@ class TemplateManagerController implements \App\ControllerInterface {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function getTemplateById(string $id): ?array {
-        $sql = "SELECT * FROM templates WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-    }
-
     private function validateTemplate(array $data): void {
         if (empty($data['name'])) {
             throw new \Exception('Template name is required');
@@ -77,8 +70,77 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     private function updateTemplate(string $id, array $data): void {
-        $sql = "UPDATE templates SET name = ?, content = ?, updated_at = NOW() WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$data['name'], $data['content'], $id]);
+        try {
+            $this->conn->beginTransaction();
+
+            // Update template
+            $sql = "UPDATE templates SET name = ?, content = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$data['name'], $data['content'], $id]);
+
+            // Delete existing variables
+            $sql = "DELETE FROM template_variables WHERE template_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id]);
+
+            // Insert new variables
+            if (!empty($data['variables'])) {
+                $sql = "INSERT INTO template_variables (template_id, name, default_value, type) VALUES (?, ?, ?, ?)";
+                $stmt = $this->conn->prepare($sql);
+                
+                foreach ($data['variables'] as $variable) {
+                    $stmt->execute([
+                        $id,
+                        $variable['name'],
+                        $variable['default_value'],
+                        $variable['type']
+                    ]);
+                }
+            }
+
+            $this->conn->commit();
+        } catch (\Exception $e) {
+            $this->conn->rollBack();
+            throw $e;
+        }
+    }
+
+    private function getTemplateById(string $id): ?array {
+        try {
+            // Get template data
+            $sql = "SELECT t.*, GROUP_CONCAT(
+                        JSON_OBJECT(
+                            'name', tv.name,
+                            'default_value', tv.default_value,
+                            'type', tv.type
+                        )
+                    ) as variables
+                    FROM templates t
+                    LEFT JOIN template_variables tv ON t.id = tv.template_id
+                    WHERE t.id = ?
+                    GROUP BY t.id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id]);
+            $template = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$template) {
+                return null;
+            }
+
+            // Parse variables JSON
+            if ($template['variables']) {
+                $template['variables'] = array_map(
+                    fn($var) => json_decode($var, true),
+                    explode(',', $template['variables'])
+                );
+            } else {
+                $template['variables'] = [];
+            }
+
+            return $template;
+        } catch (\Exception $e) {
+            error_log("Error fetching template: " . $e->getMessage());
+            return null;
+        }
     }
 }
