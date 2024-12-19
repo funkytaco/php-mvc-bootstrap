@@ -92,10 +92,19 @@
         // Initialize template manager
         class TemplateManager {
             constructor() {
-                this.currentTemplate = null;
+                this.currentTemplate = {
+                    id: 'new',
+                    name: 'New Template',
+                    content: '',
+                    type: 'page',
+                    variables: []
+                };
                 this.variables = new Map();
                 this.setupEventListeners();
                 this.setupCodeMirrorEvents();
+
+                // Set initial content in editor
+                editor.setValue('');
             }
 
             setupCodeMirrorEvents() {
@@ -103,6 +112,21 @@
                 editor.on('change', () => {
                     this.detectVariables(editor.getValue());
                 });
+            }
+
+            loadVariables(variables) {
+                if (!variables) return;
+                
+                variables.forEach(variable => {
+                    this.variables.set(variable.name, {
+                        name: variable.name,
+                        defaultValue: variable.default_value || '',
+                        type: variable.type || 'string'
+                    });
+                });
+                
+                // Update variables panel with loaded variables
+                this.detectVariables(editor.getValue());
             }
 
             detectVariables(content) {
@@ -200,20 +224,27 @@
             }
 
             async saveTemplate() {
-                if (!this.currentTemplate) return;
-
-                const templateData = {
-                    content: editor.getValue(),
-                    name: this.currentTemplate.name,
-                    variables: Array.from(this.variables.values()).map(v => ({
-                        name: v.name,
-                        default_value: v.defaultValue,
-                        type: v.type
-                    }))
-                };
-
                 try {
-                    const response = await fetch(`/templates/${this.currentTemplate.id}`, {
+                    // Ensure all required fields are present
+                    const templateData = {
+                        template: {
+                            content: editor.getValue(),
+                            name: this.currentTemplate.name || 'New Template',
+                            type: this.currentTemplate.type || 'page',
+                            variables: Array.from(this.variables.values())
+                                .filter(v => v.name && v.name.trim()) // Only include variables with names
+                                .map(v => ({
+                                    name: v.name.trim(),
+                                    default_value: v.defaultValue || '',
+                                    type: v.type || 'string'
+                                }))
+                        }
+                    };
+
+                    const isNew = !this.currentTemplate.id || this.currentTemplate.id === 'new';
+                    const url = isNew ? '/templates/new' : `/templates/${this.currentTemplate.id}`;
+
+                    const response = await fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -221,14 +252,24 @@
                         body: JSON.stringify(templateData)
                     });
 
+                    const result = await response.json();
+
                     if (response.ok) {
+                        if (isNew && result.id) {
+                            // Update the current template ID immediately
+                            this.currentTemplate.id = result.id;
+                            // Update the URL to reflect the new template ID
+                            const newUrl = new URL(window.location);
+                            newUrl.searchParams.set('id', result.id);
+                            window.history.pushState({}, '', newUrl);
+                        }
                         this.showNotification('Template saved successfully');
                     } else {
-                        throw new Error('Failed to save template');
+                        throw new Error(result.error || 'Failed to save template');
                     }
                 } catch (error) {
                     console.error('Error saving template:', error);
-                    this.showNotification('Error saving template', 'error');
+                    this.showNotification(error.message || 'Error saving template', 'error');
                 }
             }
 

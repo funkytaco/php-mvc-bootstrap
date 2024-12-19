@@ -69,14 +69,111 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function saveTemplate(Request $request, Response $response) {
-        $templateData = $request->param('template');
         $templateId = $request->param('id');
+        $data = json_decode($request->body(), true);
+        
+        if (!isset($data['template'])) {
+            $response->code(400);
+            return $response->json(['error' => 'Missing template data']);
+        }
+        
+        $templateData = $data['template'];
         
         try {
             $this->validateTemplate($templateData);
-            $this->updateTemplate($templateId, $templateData);
-            return $response->json(['success' => true]);
+            
+            // Begin transaction
+            $this->conn->beginTransaction();
+            
+            // Generate UUID for new template if needed
+            if ($templateId === 'new') {
+                $templateId = $this->generateUUID();
+            }
+
+            // Verify template exists for updates
+            if ($templateId !== 'new') {
+                $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
+                $verifyStmt->execute([':id' => $templateId]);
+                if (!$verifyStmt->fetch() && $templateId !== 'new') {
+                    throw new \Exception('Template not found');
+                }
+            }
+            
+            // Insert or update template
+            if ($templateId === 'new') {
+                $sql = "INSERT INTO templates (id, name, content, type, is_active, created_at, updated_at) 
+                        VALUES (:id, :name, :content, :type, :is_active, NOW(), NOW())";
+            } else {
+                $sql = "UPDATE templates SET 
+                        name = :name,
+                        content = :content,
+                        type = :type,
+                        updated_at = NOW()
+                        WHERE id = :id";
+            }
+            
+            $stmt = $this->conn->prepare($sql);
+            $params = [
+                ':id' => $templateId,
+                ':name' => $templateData['name'],
+                ':content' => $templateData['content'],
+                ':type' => $templateData['type'] ?? 'page'
+            ];
+            
+            if ($templateId === 'new') {
+                $params[':is_active'] = true;
+            }
+            
+            $stmt->execute($params);
+
+            // Verify template exists after creation/update
+            $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
+            $verifyStmt->execute([':id' => $templateId]);
+            if (!$verifyStmt->fetch()) {
+                throw new \Exception('Failed to save template');
+            }
+            // Delete existing variables
+            $sql = "DELETE FROM template_variables WHERE template_id = :template_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':template_id' => $templateId]);
+            
+            // Insert variables
+            if (!empty($templateData['variables'])) {
+                $sql = "INSERT INTO template_variables 
+                        (id, template_id, name, default_value, type) 
+                        VALUES (:id, :template_id, :name, :default_value, :type)";
+                $stmt = $this->conn->prepare($sql);
+                
+                // Ensure we have a valid template ID before saving variables
+                $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
+                $verifyStmt->execute([':id' => $templateId]);
+                if (!$verifyStmt->fetch()) {
+                    throw new \Exception('Invalid template ID for saving variables');
+                }
+
+                foreach ($templateData['variables'] as $variable) {
+                    $stmt->execute([
+                        ':id' => $this->generateUUID(),
+                        ':template_id' => $templateId,
+                        ':name' => $variable['name'],
+                        ':default_value' => $variable['default_value'] ?? '',
+                        ':type' => $variable['type'] ?? 'string'
+                    ]);
+                }
+            }
+            
+            // Commit transaction
+            $this->conn->commit();
+            
+            return $response->json([
+                'success' => true,
+                'id' => $templateId
+            ]);
         } catch (\Exception $e) {
+            // Rollback on error
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
             $response->code(400);
             return $response->json(['error' => $e->getMessage()]);
         }
@@ -114,11 +211,12 @@ class TemplateManagerController implements \App\ControllerInterface {
 
             // Insert new variables
             if (!empty($data['variables'])) {
-                $sql = "INSERT INTO template_variables (template_id, name, default_value, type) VALUES (?, ?, ?, ?)";
+                $sql = "INSERT INTO template_variables (id, template_id, name, default_value, type) VALUES (?, ?, ?, ?, ?)";
                 $stmt = $this->conn->prepare($sql);
                 
                 foreach ($data['variables'] as $variable) {
                     $stmt->execute([
+                        $this->generateUUID(),
                         $id,
                         $variable['name'],
                         $variable['default_value'],
@@ -132,6 +230,15 @@ class TemplateManagerController implements \App\ControllerInterface {
             $this->conn->rollBack();
             throw $e;
         }
+    }
+
+    private function generateUUID(): string {
+        // Generate v4 UUID
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);    // Set version to 0100
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);    // Set bits 6-7 to 10
+        
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
     private function getTemplateById(string $id): ?array {

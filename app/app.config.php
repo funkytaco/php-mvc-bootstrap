@@ -35,7 +35,7 @@
 
     /** Required settings - Do Not Modify **/
     $arrRequiredSettings = [
-        'name' => 'Bootstrap',
+        'name' => 'Mvc',
         'installer-name' => 'mvc',
         'views' => 'Views',
         'controllers' => 'Controllers',
@@ -43,6 +43,7 @@
     ];
 
     $arrMySettings = [];
+
 
     /*** Do Not Modify below this line **/
     $arrSettings = $arrRequiredSettings;

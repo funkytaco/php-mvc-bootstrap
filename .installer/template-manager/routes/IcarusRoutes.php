@@ -10,11 +10,8 @@
         ['POST', '/templates/[i:id]', function($request, $response) use ($container) {
             return $container->get('Icarus\Controllers\TemplateManagerController')->saveTemplate($request, $response);
         }],
-        ['GET', '/templates/new', function($request, $response) use ($container) {
-            return $container->get('Icarus\Controllers\TemplateManagerController')->newTemplate($request, $response);
-        }],
         ['POST', '/templates/new', function($request, $response) use ($container) {
-            return $container->get('Icarus\Controllers\TemplateManagerController')->createTemplate($request, $response);
+            return $container->get('Icarus\Controllers\TemplateManagerController')->saveTemplate($request, $response);
         }],
         ['POST', '/template-manager/preview', function($request, $response) use ($container) {
             return $container->get('Icarus\Controllers\TemplateManagerController')->previewTemplate($request, $response);
