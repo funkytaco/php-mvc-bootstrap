@@ -106,29 +106,24 @@
             }
 
             detectVariables(content) {
-                // Regular expression to match {{variableName}} pattern
-                const variableRegex = /\{\{([^}]+)\}\}/g;
+                // Regular expression to match {{variableName}} pattern, not {{{variableName}}}
+                const variableRegex = /\{\{([^{}]+)\}\}/g;
                 const foundVariables = new Set();
-                let match;
-
+                
                 // Find all variables in the content
+                let match;
                 while ((match = variableRegex.exec(content)) !== null) {
                     const varName = match[1].trim();
-                    if (!varName.includes(' ') && !varName.startsWith('>')) { // Exclude partials and invalid names
-                        if (!varName.includes('#')) { // Exclude partials and invalid names
-                            if (!varName.includes('#')) { 
-                                if (!varName.includes('.')) { 
-                                    if (!varName.includes('/')) { 
-                                        if (!varName.includes('\/')) { 
-                                            foundVariables.add(varName); //exclude arrays
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    
+                    // Skip if variable name contains invalid characters or patterns
+                    const invalidPatterns = [' ', '>', '#', '.', '/', '\\/'];
+                    const isValid = !invalidPatterns.some(pattern => varName.includes(pattern));
+                    
+                    if (isValid) {
+                        foundVariables.add(varName);
                     }
                 }
-
+                
                 // Update variables panel
                 this.updateVariablesPanel(foundVariables);
             }
