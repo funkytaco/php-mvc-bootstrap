@@ -12,7 +12,7 @@ class TemplateManagerController implements \App\ControllerInterface {
     private PDO $conn;
     private array $data;
 
-    public function __construct(Renderer $renderer, PDO $conn) {
+    public function __construct(Renderer $renderer, \PDO $conn) {
         $this->renderer = $renderer;
         $this->conn = $conn;
         $this->data = [
