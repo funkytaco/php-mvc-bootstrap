@@ -27,9 +27,12 @@
             "Main\\": "src/",
             "Tasks\\" : ".",
             "Icarus\\Controllers\\": "app/Controllers/template-manager/",
-            "App\\": "../app/"
-
-        }
+            "App\\": "app/",
+            "Test\\": "test/src/"
+        },
+        "classmap": [
+            "app/Controllers/"
+        ]
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",

@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
-<phpunit backupGlobals="false"
-    backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+    backupGlobals="false"
     colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
     processIsolation="false"
-    syntaxCheck="false"
     bootstrap="test/bootstrap.php"
     timeoutForSmallTests="3"
     timeoutForMediumTests="10"
@@ -18,9 +15,9 @@
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
+    <source>
+        <include>
             <directory>./src/</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </source>
 </phpunit>

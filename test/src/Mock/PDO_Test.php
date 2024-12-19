@@ -2,8 +2,11 @@
 namespace Test\Mock;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Small;
 use Main\Mock\PDO;
 
+#[Small]
 class PDO_Test extends TestCase
 {
     private PDO $conn;
@@ -13,50 +16,35 @@ class PDO_Test extends TestCase
         $this->conn = new PDO();
         $this->mockGetUserData = [
             ["name" => "@funkytaco"],
-            ["name" => "@Foo"],
-            ["name" => "@Bar"]
+            ["name" => "@PatrickLouys"],
+            ["name" => "@Rican7"]
         ];
     }
 
-    /**
-     * @test
-     * @small
-     */
-    public function shouldBeInstanceOfMockPDO() {
+    #[Test]
+    public function shouldBeInstanceOfMockPDO(): void {
         $this->assertInstanceOf(PDO::class, $this->conn);
     }
 
-    /**
-     * @test
-     * @small
-     */
-    public function shouldReturnMockUsers() {
+    #[Test]
+    public function shouldReturnMockUsers(): void {
         $this->assertEquals($this->mockGetUserData, $this->conn->getUsers());
     }
 
-    /**
-     * @test
-     * @small
-     */
-    public function shouldPrepareMockStatement() {
+    #[Test]
+    public function shouldPrepareMockStatement(): void {
         $stmt = $this->conn->prepare("SELECT * FROM users");
         $this->assertInstanceOf(\PDOStatement::class, $stmt);
     }
 
-    /**
-     * @test
-     * @small
-     */
-    public function shouldExecuteMockStatement() {
+    #[Test]
+    public function shouldExecuteMockStatement(): void {
         $stmt = $this->conn->prepare("SELECT * FROM users");
         $this->assertTrue($stmt->execute());
     }
 
-    /**
-     * @test
-     * @small
-     */
-    public function shouldFetchAllFromMockStatement() {
+    #[Test]
+    public function shouldFetchAllFromMockStatement(): void {
         $stmt = $this->conn->prepare("SELECT * FROM users");
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
