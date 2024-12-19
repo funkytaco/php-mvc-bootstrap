@@ -1,0 +1,21 @@
+FROM postgres:15
+
+# Environment variables will be provided via .env file
+ARG POSTGRES_DB
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+
+ENV POSTGRES_DB=${POSTGRES_DB}
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+# Copy initialization scripts
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Expose the PostgreSQL port
+EXPOSE 5432
+
+# Add labels
+LABEL maintainer="SmallCloud LLC"
+LABEL version="1.0"
+LABEL description="PostgreSQL container for template management system"
