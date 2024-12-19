@@ -5,7 +5,7 @@ namespace Icarus\Controllers;
 use \Klein\Request;
 use \Klein\Response;
 use \Main\Renderer\Renderer;
-use \Main\Mock\PDO;
+use \Main\Modules\PDO_Module;
 
 class TemplateManagerController implements \App\ControllerInterface {
     private Renderer $renderer;
