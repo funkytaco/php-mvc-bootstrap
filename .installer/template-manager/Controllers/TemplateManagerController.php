@@ -4,15 +4,15 @@ namespace Icarus\Controllers;
 
 use \Klein\Request;
 use \Klein\Response;
-use \Main\Renderer\Renderer;
+use \Main\Renderer\MustacheRenderer;
 use \Main\Modules\PDO_Module;
 
 class TemplateManagerController implements \App\ControllerInterface {
-    private Renderer $renderer;
+    private MustacheRenderer $renderer;
     private \PDO $conn;
     private array $data;
 
-    public function __construct(Renderer $renderer, \PDO $conn) {
+    public function __construct(MustacheRenderer $renderer, \PDO $conn) {
         $this->renderer = $renderer;
         $this->conn = $conn;
         $this->data = [
@@ -22,7 +22,7 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function get(Request $request, Response $response) {
-        $html = $this->renderer->render('template-manager/index', $this->data);
+        $html = $this->renderer->render('template-manager/editor', $this->data);
         $response->body($html);
         return $response;
     }
@@ -41,142 +41,21 @@ class TemplateManagerController implements \App\ControllerInterface {
 
     public function previewTemplate(Request $request, Response $response) {
         $data = json_decode($request->body(), true);
-        
-        if (!isset($data['template']) || !isset($data['variables'])) {
-            $response->code(400);
-            return $response->json(['error' => 'Missing template or variables']);
-        }
+        $content = $data['content']; //$data['template'];
 
-        try {
-            // Convert variables array to key-value pairs for rendering
-            $templateData = [];
-            foreach ($data['variables'] as $variable) {
-                if (isset($variable['name']) && isset($variable['value'])) {
-                    $templateData[$variable['name']] = $variable['value'];
-                }
-            }
-
-            // Create a new Mustache Engine instance for raw string rendering
-            $engine = new \Mustache_Engine();
-            
-            // Render the template string directly
-            $rendered = $engine->render($data['template'], $templateData);
-            return $response->json(['rendered' => $rendered]);
-        } catch (\Exception $e) {
-            $response->code(500);
-            return $response->json(['error' => $e->getMessage()]);
-        }
+        $rendered = $this->renderer->render($content, []);
+        return $response->json(['rendered' => $rendered]);
     }
 
     public function saveTemplate(Request $request, Response $response) {
         $templateId = $request->param('id');
         $data = json_decode($request->body(), true);
-        
-        if (!isset($data['template'])) {
-            $response->code(400);
-            return $response->json(['error' => 'Missing template data']);
-        }
-        
-        $templateData = $data['template'];
-        
-        try {
-            $this->validateTemplate($templateData);
-            
-            // Begin transaction
-            $this->conn->beginTransaction();
-            
-            // Generate UUID for new template if needed
-            if ($templateId === 'new') {
-                $templateId = $this->generateUUID();
-            }
+        $content = $data['content'];
 
-            // Verify template exists for updates
-            if ($templateId !== 'new') {
-                $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
-                $verifyStmt->execute([':id' => $templateId]);
-                if (!$verifyStmt->fetch() && $templateId !== 'new') {
-                    throw new \Exception('Template not found');
-                }
-            }
-            
-            // Insert or update template
-            if ($templateId === 'new') {
-                $sql = "INSERT INTO templates (id, name, content, type, is_active, created_at, updated_at) 
-                        VALUES (:id, :name, :content, :type, :is_active, NOW(), NOW())";
-            } else {
-                $sql = "UPDATE templates SET 
-                        name = :name,
-                        content = :content,
-                        type = :type,
-                        updated_at = NOW()
-                        WHERE id = :id";
-            }
-            
-            $stmt = $this->conn->prepare($sql);
-            $params = [
-                ':id' => $templateId,
-                ':name' => $templateData['name'],
-                ':content' => $templateData['content'],
-                ':type' => $templateData['type'] ?? 'page'
-            ];
-            
-            if ($templateId === 'new') {
-                $params[':is_active'] = true;
-            }
-            
-            $stmt->execute($params);
+        $stmt = $this->conn->prepare("UPDATE templates SET content = ? WHERE id = ?");
+        $stmt->execute([$content, $templateId]);
 
-            // Verify template exists after creation/update
-            $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
-            $verifyStmt->execute([':id' => $templateId]);
-            if (!$verifyStmt->fetch()) {
-                throw new \Exception('Failed to save template');
-            }
-            // Delete existing variables
-            $sql = "DELETE FROM template_variables WHERE template_id = :template_id";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([':template_id' => $templateId]);
-            
-            // Insert variables
-            if (!empty($templateData['variables'])) {
-                $sql = "INSERT INTO template_variables 
-                        (id, template_id, name, default_value, type) 
-                        VALUES (:id, :template_id, :name, :default_value, :type)";
-                $stmt = $this->conn->prepare($sql);
-                
-                // Ensure we have a valid template ID before saving variables
-                $verifyStmt = $this->conn->prepare("SELECT id FROM templates WHERE id = :id");
-                $verifyStmt->execute([':id' => $templateId]);
-                if (!$verifyStmt->fetch()) {
-                    throw new \Exception('Invalid template ID for saving variables');
-                }
-
-                foreach ($templateData['variables'] as $variable) {
-                    $stmt->execute([
-                        ':id' => $this->generateUUID(),
-                        ':template_id' => $templateId,
-                        ':name' => $variable['name'],
-                        ':default_value' => $variable['default_value'] ?? '',
-                        ':type' => $variable['type'] ?? 'string'
-                    ]);
-                }
-            }
-            
-            // Commit transaction
-            $this->conn->commit();
-            
-            return $response->json([
-                'success' => true,
-                'id' => $templateId
-            ]);
-        } catch (\Exception $e) {
-            // Rollback on error
-            if ($this->conn->inTransaction()) {
-                $this->conn->rollBack();
-            }
-            $response->code(400);
-            return $response->json(['error' => $e->getMessage()]);
-        }
+        return $response->json(['success' => true]);
     }
 
     private function getTemplates(): array {

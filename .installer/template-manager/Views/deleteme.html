@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mustache Template Editor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .editor-container { display: flex; flex-direction: column; height: 100vh; }
+        .editor-header { padding: 10px; background: #f5f5f5; border-bottom: 1px solid #ddd; }
+        .editor-body { flex: 1; display: flex; }
+        .editor-sidebar { width: 200px; padding: 10px; background: #f9f9f9; border-right: 1px solid #ddd; }
+        .editor-main { flex: 1; padding: 10px; }
+        .editor-footer { padding: 10px; background: #f5f5f5; border-top: 1px solid #ddd; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="editor-header">
+            <h1>Mustache Template Editor</h1>
+        </div>
+        <div class="editor-body">
+            <div class="editor-sidebar">
+                <button id="loadTemplate">Load Template</button>
+                <button id="saveTemplate">Save Template</button>
+                <button id="previewTemplate">Preview Template</button>
+            </div>
+            <div class="editor-main">
+                <textarea id="codeEditor"></textarea>
+            </div>
+        </div>
+        <div class="editor-footer">
+            <button id="saveTemplate">Save</button>
+            <button id="previewTemplate">Preview</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script>
+        const editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
+            mode: "htmlmixed",
+            theme: "monokai",
+            lineNumbers: true,
+        });
+
+        document.getElementById('loadTemplate').addEventListener('click', async () => {
+            const response = await fetch('/api/templates/1'); // Replace with dynamic ID
+            const template = await response.json();
+            editor.setValue(template.content);
+        });
+
+        document.getElementById('saveTemplate').addEventListener('click', async () => {
+            const content = editor.getValue();
+            await fetch('/api/templates/1', { // Replace with dynamic ID
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content }),
+            });
+            alert('Template saved!');
+        });
+
+        document.getElementById('previewTemplate').addEventListener('click', async () => {
+            const content = editor.getValue();
+            const response = await fetch('/api/templates/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content }),
+            });
+            const preview = await response.json();
+            alert(preview.rendered);
+        });
+    </script>
+</body>
+</html>
