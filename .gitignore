@@ -1,12 +1,11 @@
 !.*
+vendor/
 src/.lock/app.lock
 .DS_Store
 #public/assets/
 #app/
 *.xlsx
 **/credentials.json
-vendor/
-vendor/composer/
 app/Controllers/
 app/Views/
 app/CustomRoutes.php

@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^8.2",
+        "phpunit/phpunit": "^10.0",
         "filp/whoops": "^2.15",
         "google/apiclient": "^2.15",
         "klein/klein": "^2.1.2",
@@ -31,6 +32,7 @@
         }
     },
     "scripts": {
+        "test": "./vendor/bin/phpunit",
         "serve" : "Tasks\\ApplicationTasks::startDevelopmentWebServer",
         "commit" : "Tasks\\ApplicationTasks::commitToInstallerDirectory",
         "install-mvc" : "Tasks\\ApplicationTasks::InstallMvc",
