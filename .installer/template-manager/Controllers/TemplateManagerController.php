@@ -22,7 +22,7 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function get(Request $request, Response $response) {
-        $html = $this->renderer->render('template-manager/editor', $this->data);
+        $html = $this->renderer->render('template-manager/index', $this->data);
         $response->body($html);
         return $response;
     }
