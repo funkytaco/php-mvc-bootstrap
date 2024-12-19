@@ -9,7 +9,7 @@ use \Main\Modules\PDO_Module;
 
 class TemplateManagerController implements \App\ControllerInterface {
     private Renderer $renderer;
-    private PDO $conn;
+    private \PDO $conn;
     private array $data;
 
     public function __construct(Renderer $renderer, \PDO $conn) {
