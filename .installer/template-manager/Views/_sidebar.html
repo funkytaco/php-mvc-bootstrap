@@ -12,16 +12,16 @@
                 <div>
                     <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-2">Pages</h3>
                     <ul class="space-y-1">
-                        {{#each templates}}
-                            {{#if type == 'page'}}
+                        {{#templates}}
+                            {{#isPage}}
                                 <li>
                                     <a href="/templates?id={{id}}" 
-                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#if active}}bg-gray-700{{/if}}">
+                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#active}}bg-gray-700{{/active}}">
                                         {{name}}
                                     </a>
                                 </li>
-                            {{/if}}
-                        {{/each}}
+                            {{/isPage}}
+                        {{/templates}}
                     </ul>
                 </div>
 
@@ -29,16 +29,16 @@
                 <div class="mt-6">
                     <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-2">Layouts</h3>
                     <ul class="space-y-1">
-                        {{#each templates}}
-                            {{#if type == 'layout'}}
+                        {{#templates}}
+                            {{#isLayout}}
                                 <li>
                                     <a href="/templates?id={{id}}" 
-                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#if active}}bg-gray-700{{/if}}">
+                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#active}}bg-gray-700{{/active}}">
                                         {{name}}
                                     </a>
                                 </li>
-                            {{/if}}
-                        {{/each}}
+                            {{/isLayout}}
+                        {{/templates}}
                     </ul>
                 </div>
 
@@ -46,16 +46,16 @@
                 <div class="mt-6">
                     <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-2">Partials</h3>
                     <ul class="space-y-1">
-                        {{#each templates}}
-                            {{#if type == 'partial'}}
+                        {{#templates}}
+                            {{#isPartial}}
                                 <li>
                                     <a href="/templates?id={{id}}" 
-                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#if active}}bg-gray-700{{/if}}">
+                                       class="block px-3 py-2 rounded-md text-sm hover:bg-gray-700 {{#active}}bg-gray-700{{/active}}">
                                         {{name}}
                                     </a>
                                 </li>
-                            {{/if}}
-                        {{/each}}
+                            {{/isPartial}}
+                        {{/templates}}
                     </ul>
                 </div>
             </div>
