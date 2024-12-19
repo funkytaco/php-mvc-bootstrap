@@ -1,4 +1,5 @@
 <?php
+namespace App;
 use \Klein\Request;
 use \Klein\Response;
 

@@ -14,7 +14,7 @@ use Main\Modules\Date_Module;
     *   Dependency Injecting makes testing easier!
     ***/
     //#[\AllowDynamicProperties]
-    class ContactController implements ControllerInterface {
+    class ContactController implements \App\ControllerInterface {
 
         private $data;
         private Renderer $renderer;

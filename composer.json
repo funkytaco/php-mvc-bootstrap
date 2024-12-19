@@ -24,13 +24,17 @@
     "autoload": {
         "psr-4": {
             "Main\\": "src/",
-            "Tasks\\" : "."
+            "Tasks\\" : ".",
+            "Icarus\\Controllers\\": "app/Controllers/template-manager/",
+            "App\\": "../app/"
+
         }
     },
     "scripts": {
         "serve" : "Tasks\\ApplicationTasks::startDevelopmentWebServer",
         "commit" : "Tasks\\ApplicationTasks::commitToInstallerDirectory",
         "install-mvc" : "Tasks\\ApplicationTasks::InstallMvc",
+        "install-icarus" : "Tasks\\ApplicationTasks::InstallIcarus",
         "install-semanticui" : "Tasks\\ApplicationTasks::InstallSemanticUi",
         "unlock" : "Tasks\\ApplicationTasks::DeleteLockFile",
         "post-install-cmd": [  "Tasks\\ApplicationTasks::postInstall" ],
@@ -41,20 +45,19 @@
     "extra": {
         "mvc-assets": {
             "copy-assets" : true,
-            "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
-            "examples": { "source": "vendor/twbs/bootstrap/site/content/docs/5.3/examples/cheatsheet", "target": "html/assets/bootstrap/dist", "isFile": false },
-            "assets": { "source": "vendor/twbs/bootstrap/site/static/docs/5.3/assets", "target": "html/docs/5.3/docs/assets", "isFile": false },
-            "newdoc-assets": { "source": "vendor/twbs/bootstrap/site/static/docs/5.3/assets", "target": "html/docs/5.3/docs/assets", "isFile": false },
-            "newjs": { "source": "vendor/twbs/bootstrap/dist/js", "target": "html/docs/5.3/docs/assets/js", "isFile": false },
-            "newcss": { "source": "vendor/twbs/bootstrap/dist/css", "target": "html/docs/5.3/docs/assets/css", "isFile": false },
-            "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "html/assets/bootstrap/fonts", "isFile": false},
             "views": { "source": ".installer/mvc/Views", "target": "app/Views", "isFile": false},
             "controllers": { "source": ".installer/mvc/Controllers", "target": "app/Controllers", "isFile": false},
             "routes": { "source": ".installer/mvc/routes/CustomRoutes.php", "target": "app/CustomRoutes.php", "isFile": true},
-            "config": { "source": ".installer/mvc/app.config.php", "target": "app/app.config.php", "isFile": true},
-            "dashboard-css": { "source": "vendor/twbs/bootstrap//site/content/docs/5.3/examples/dashboard", "target": "html/assets/css/themes", "isFile": false},
+            "config": { "source": ".installer/mvc/app.config.php", "target": "app/app.config.php", "isFile": true}
+        },
+        "icarus-assets": {
+            "copy-assets" : true,
+            "views": { "source": ".installer/template-manager/Views", "target": "app/Views/template-manager", "isFile": false},
+            "controllers": { "source": ".installer/template-manager/Controllers", "target": "app/Controllers/template-manager", "isFile": false},
+            "routes": { "source": ".installer/template-manager/routes/IcarusRoutes.php", "target": "src/IcarusRoutes.php", "isFile": true},
             "lockFile": { "source": ".installer/app.lock", "target": "src/.lock/app.lock", "isFile": true}
         },
+
         "old-mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},

@@ -129,5 +129,14 @@ if (is_file(CUSTOM_ROUTES_FILE)) {
     }
 }
 
+if (is_file('src/IcarusRoutes.php')) {
+    $icarus_routes = include('src/IcarusRoutes.php');
+    if (gettype($icarus_routes) == 'array') {
+        foreach ($icarus_routes as $route) {
+            $router->respond($route[0], $route[1], $route[2]);
+        }
+    }
+}
+
 // Dispatch routes
 $router->dispatch();

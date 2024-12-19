@@ -17,7 +17,7 @@ use Main\Modules\MCP_Module;
     *   Dependency Injecting makes testing easier!
     ***/
 
-    class MCPController implements ControllerInterface {
+    class MCPController implements \App\ControllerInterface {
 
         private $data;
         private Renderer $renderer;

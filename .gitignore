@@ -6,3 +6,7 @@ src/.lock/app.lock
 *.xlsx
 **/credentials.json
 vendor/
+app/Controllers/
+app/Views/
+app/CustomRoutes.php
+src/IcarusRoutes.php

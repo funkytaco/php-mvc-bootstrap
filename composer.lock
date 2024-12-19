@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8279b56d7dc5d5be047307349b2e8460",
+    "content-hash": "fba2587ec55b89baacd178ea86edf45a",
     "packages": [
         {
             "name": "ezyang/htmlpurifier",

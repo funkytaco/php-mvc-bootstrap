@@ -284,16 +284,26 @@ class ApplicationTasks {
         }
     }
 
+    public static function InstallIcarus(Event $event) {
+        if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
+        echo self::ansiFormat('RUNNING>', 'Installing Icarus...');
+        self::copy_extra_assets('icarus-assets', $event);
+    }
+
     public static function InstallMvc(Event $event) {
         if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
         echo self::ansiFormat('RUNNING>', 'Installing Bootstrap Template...');
         self::copy_extra_assets('mvc-assets', $event);
+        echo self::ansiFormat('NOTICE', 'Installing Icarus...');
+        echo self::InstallIcarus($event);
     }
 
     public static function InstallSemanticUi(Event $event) {
         if (!self::AreComposerPackagesInstalled($event)) exit('Please run composer install first.');
         echo self::ansiFormat('RUNNING>', 'Installing Semantic UI Template...');
         self::copy_extra_assets('semanticui-assets', $event);
+        echo self::ansiFormat('NOTICE', 'Installing Icarus...');
+        echo self::InstallIcarus($event);
     }
 
     public static function postPackageReinstallBootstrap(Event $event) {
