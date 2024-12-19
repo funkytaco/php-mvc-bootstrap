@@ -56,8 +56,11 @@ class TemplateManagerController implements \App\ControllerInterface {
                 }
             }
 
-            // Render the template using Mustache
-            $rendered = $this->renderer->render($data['template'], $templateData);
+            // Create a new Mustache Engine instance for raw string rendering
+            $engine = new \Mustache_Engine();
+            
+            // Render the template string directly
+            $rendered = $engine->render($data['template'], $templateData);
             return $response->json(['rendered' => $rendered]);
         } catch (\Exception $e) {
             $response->code(500);
