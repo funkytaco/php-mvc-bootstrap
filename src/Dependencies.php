@@ -9,7 +9,7 @@ use Main\Renderer\MustacheRenderer;
 use Main\Modules\Date_Module;
 use Main\Modules\MCP_Module;
 use Mustache_Engine;
-use Mustache_Loader_FilesystemLoader;
+use Main\Renderer\FlexibleMustacheLoader;
 
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->useAutowiring(true);
@@ -34,9 +34,11 @@ $containerBuilder->addDefinitions([
         $options = ['extension' => '.html'];
         
         try {
+            $loader = new FlexibleMustacheLoader(VIEWS_DIR, $options);
+            
             return new Mustache_Engine([
-                'loader' => new Mustache_Loader_FilesystemLoader(VIEWS_DIR, $options),
-                'partials_loader' => new Mustache_Loader_FilesystemLoader(VIEWS_DIR, $options)
+                'loader' => $loader,
+                'partials_loader' => $loader
             ]);
         } catch (Exception $e) {
             if (stristr($e->getMessage(), "FilesystemLoader baseDir must be a directory") !== false) {

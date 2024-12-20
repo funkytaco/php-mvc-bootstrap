@@ -42,7 +42,8 @@ class TemplateManagerController implements \App\ControllerInterface {
     public function previewTemplate(Request $request, Response $response) {
         //print_r($request->body()) returns {template: "<html>{{mustacheTag}}}</html>", variables: [{name: "joe", value: "JoeValue", type: "string"}]}
         $data = json_decode($request->body(), true);
-        $rendered = $this->renderer->render($data['content'], $data['variables']);
+        $rendered = $this->renderer->renderString($data['template'], $data['variables']);
+        //print_r($rendered);exit;
         return $response->json(['rendered' => $rendered]);
     }
 
