@@ -500,10 +500,10 @@
 
             async loadTemplate(id) {
                 try {
-                    const response = await fetch(`/api/templates/${id}`);
-                    console.log(response.json());
+                    const response = await fetch(`/api/templates/id/${id}`);
                     const template = await response.json();
                     this.currentTemplate = template;
+                    console.log(template);
                     editor.setValue(template.content);
                     this.loadVariables(template.variables);
                     
