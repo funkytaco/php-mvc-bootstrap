@@ -504,12 +504,16 @@
                     const template = await response.json();
                     this.currentTemplate = template;
                     console.log(template);
-                    editor.setValue(template.content);
-                    this.loadVariables(template.variables);
                     
-                    // Update template name and type inputs
+                    // Update template name and type inputs first
                     document.getElementById('templateName').value = template.name || '';
                     document.getElementById('templateType').value = template.type || 'page';
+                    
+                    // Then set content and load variables
+                    editor.setValue(template.content || '');
+                    if (template.variables) {
+                        this.loadVariables(template.variables);
+                    }
                 } catch (error) {
                     console.error('Error loading template:', error);
                 }
