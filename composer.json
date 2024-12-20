@@ -66,6 +66,7 @@
         "old-mvc-assets": {
             "copy-assets" : true,
             "dist": { "source": "vendor/twbs/bootstrap/dist", "target": "html/assets/bootstrap/dist", "isFile": false},
+            "assets": { "source": ".installer/template-manager/assets/js", "target": "html/assets/js", "isFile": true},            
             "docs": { "source": "vendor/twbs/bootstrap/docs", "target": "html/assets/bootstrap/docs", "isFile": false},
             "fonts": { "source": "vendor/twbs/bootstrap/fonts", "target": "html/assets/bootstrap/fonts", "isFile": false},
             "views": { "source": ".installer/mvc/Views", "target": "app/Views", "isFile": false},

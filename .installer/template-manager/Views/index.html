@@ -152,12 +152,12 @@
                 
                 // Match different types of Mustache tags
                 const patterns = {
-                    variable: /\{\{([^#^>/!{][^}]*)\}\}/g,      // Basic variables {{name}}
-                    unescaped: /\{\{\{([^}]+)\}\}\}/g,          // Unescaped variables {{{html}}}
-                    section: /\{\{#([^}]+)\}\}/g,               // Sections {{#items}}
-                    inverted: /\{\{\^([^}]+)\}\}/g,             // Inverted sections {{^empty}}
-                    partial: /\{\{>([^}]+)\}\}/g,               // Partials {{>header}}
-                    helper: /\{\{([^{}]+\([^{}]+\))\}\}/g       // Helpers {{formatDate(date)}}
+                    variable: /\{\{([^#^>/!{][^}]*)\}\}/g,      // Basic variables 
+                    unescaped: /\{\{\{([^}]+)\}\}\}/g,          // Unescaped variables 
+                    section: /\{\{#([^}]+)\}\}/g,               // Sections #items
+                    inverted: /\{\{\^([^}]+)\}\}/g,             // Inverted sections ^empty
+                    partial: /\{\{>([^}]+)\}\}/g,               // Partials >header
+                    helper: /\{\{([^{}]+\([^{}]+\))\}\}/g       // Helpers formatDate(date)
                 };
 
                 // Process each pattern type
