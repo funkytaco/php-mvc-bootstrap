@@ -148,60 +148,162 @@
             }
 
             detectVariables(content) {
-                // Regular expression to match {{variableName}} pattern, not {{{variableName}}}
-                const variableRegex = /\{\{([^{}]+)\}\}/g;
-                const foundVariables = new Set();
+                const variables = new Map();
                 
-                // Find all variables in the content
-                let match;
-                while ((match = variableRegex.exec(content)) !== null) {
-                    const varName = match[1].trim();
-                    
-                    // Skip if variable name contains invalid characters or patterns
-                    const invalidPatterns = [' ', '>', '#', '.', '/', '\\/'];
-                    const isValid = !invalidPatterns.some(pattern => varName.includes(pattern));
-                    
-                    if (isValid) {
-                        foundVariables.add(varName);
+                // Match different types of Mustache tags
+                const patterns = {
+                    variable: /\{\{([^#^>/!{][^}]*)\}\}/g,      // Basic variables {{name}}
+                    unescaped: /\{\{\{([^}]+)\}\}\}/g,          // Unescaped variables {{{html}}}
+                    section: /\{\{#([^}]+)\}\}/g,               // Sections {{#items}}
+                    inverted: /\{\{\^([^}]+)\}\}/g,             // Inverted sections {{^empty}}
+                    partial: /\{\{>([^}]+)\}\}/g,               // Partials {{>header}}
+                    helper: /\{\{([^{}]+\([^{}]+\))\}\}/g       // Helpers {{formatDate(date)}}
+                };
+
+                // Process each pattern type
+                for (const [type, regex] of Object.entries(patterns)) {
+                    let match;
+                    while ((match = regex.exec(content)) !== null) {
+                        const name = match[1].trim();
+                        
+                        // Skip comments
+                        if (name.startsWith('!')) continue;
+                        
+                        // For helpers, extract the function name and arguments
+                        if (type === 'helper') {
+                            const helperMatch = name.match(/(\w+)\((.*)\)/);
+                            if (helperMatch) {
+                                const [_, helperName, args] = helperMatch;
+                                variables.set(name, {
+                                    name,
+                                    type: 'helper',
+                                    helperName,
+                                    arguments: args.split(',').map(arg => arg.trim())
+                                });
+                            }
+                            continue;
+                        }
+                        
+                        variables.set(name, {
+                            name,
+                            type,
+                            defaultValue: '',
+                            dataType: 'string'
+                        });
                     }
                 }
                 
-                // Update variables panel
-                this.updateVariablesPanel(foundVariables);
+                // Update variables panel with the detected tags
+                this.updateVariablesPanel(variables);
             }
 
-            updateVariablesPanel(foundVariables) {
+            updateVariablesPanel(variables) {
                 const variablesList = document.getElementById('variablesList');
                 variablesList.innerHTML = ''; // Clear existing variables
 
-                // Add each found variable to the panel
-                foundVariables.forEach(varName => {
-                    if (!this.variables.has(varName)) {
-                        this.variables.set(varName, {
-                            name: varName,
-                            defaultValue: '',
-                            type: 'string'
-                        });
-                    }
-
+                // Add each variable to the panel based on its type
+                variables.forEach((variable, key) => {
                     const varElement = document.createElement('div');
-                    varElement.className = 'flex items-center space-x-2 mb-2';
-                    varElement.innerHTML = `
-                        <input type="text" value="${varName}" readonly class="flex-1 border rounded px-2 py-1 bg-gray-100">
-                        <input type="text" placeholder="Default value" class="flex-1 border rounded px-2 py-1" 
-                            value="${this.variables.get(varName).defaultValue}"
-                            onchange="templateManager.updateVariableValue('${varName}', this.value)">
-                        <select class="border rounded px-2 py-1" 
-                            onchange="templateManager.updateVariableType('${varName}', this.value)">
-                            <option value="string" ${this.variables.get(varName).type === 'string' ? 'selected' : ''}>String</option>
-                            <option value="number" ${this.variables.get(varName).type === 'number' ? 'selected' : ''}>Number</option>
-                            <option value="boolean" ${this.variables.get(varName).type === 'boolean' ? 'selected' : ''}>Boolean</option>
-                        </select>
-                        <button onclick="templateManager.deleteVariable('${varName}'); this.parentElement.remove();" class="text-red-600 hover:text-red-700 px-2">×</button>
+                    varElement.className = 'flex flex-col space-y-2 mb-4 p-3 border rounded';
+                    
+                    // Common header for all types
+                    let header = `
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium">${this.getTypeLabel(variable.type)}</span>
+                            <button onclick="templateManager.deleteVariable('${key}'); this.closest('.flex-col').remove();" 
+                                    class="text-red-600 hover:text-red-700 px-2">×</button>
+                        </div>
                     `;
                     
+                    let content = '';
+                    
+                    switch(variable.type) {
+                        case 'helper':
+                            content = `
+                                <input type="text" value="${variable.helperName}" readonly 
+                                       class="w-full border rounded px-2 py-1 bg-gray-100 mb-2">
+                                <div class="space-y-2">
+                                    ${variable.arguments.map((arg, i) => `
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm text-gray-600">Arg ${i + 1}:</span>
+                                            <input type="text" value="${arg}" 
+                                                   class="flex-1 border rounded px-2 py-1"
+                                                   onchange="templateManager.updateHelperArg('${key}', ${i}, this.value)">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                            break;
+                            
+                        case 'section':
+                        case 'inverted':
+                            content = `
+                                <input type="text" value="${variable.name}" readonly 
+                                       class="w-full border rounded px-2 py-1 bg-gray-100 mb-2">
+                                <select class="w-full border rounded px-2 py-1"
+                                        onchange="templateManager.updateSectionType('${key}', this.value)">
+                                    <option value="array" ${variable.dataType === 'array' ? 'selected' : ''}>Array</option>
+                                    <option value="boolean" ${variable.dataType === 'boolean' ? 'selected' : ''}>Boolean</option>
+                                    <option value="object" ${variable.dataType === 'object' ? 'selected' : ''}>Object</option>
+                                </select>
+                            `;
+                            break;
+                            
+                        case 'partial':
+                            content = `
+                                <input type="text" value="${variable.name}" readonly 
+                                       class="w-full border rounded px-2 py-1 bg-gray-100">
+                            `;
+                            break;
+                            
+                        default: // variable or unescaped
+                            content = `
+                                <input type="text" value="${variable.name}" readonly 
+                                       class="w-full border rounded px-2 py-1 bg-gray-100 mb-2">
+                                <div class="flex space-x-2">
+                                    <input type="text" placeholder="Default value" 
+                                           class="flex-1 border rounded px-2 py-1" 
+                                           value="${variable.defaultValue || ''}"
+                                           onchange="templateManager.updateVariableValue('${key}', this.value)">
+                                    <select class="border rounded px-2 py-1"
+                                            onchange="templateManager.updateVariableType('${key}', this.value)">
+                                        <option value="string" ${variable.dataType === 'string' ? 'selected' : ''}>String</option>
+                                        <option value="number" ${variable.dataType === 'number' ? 'selected' : ''}>Number</option>
+                                        <option value="boolean" ${variable.dataType === 'boolean' ? 'selected' : ''}>Boolean</option>
+                                    </select>
+                                </div>
+                            `;
+                    }
+                    
+                    varElement.innerHTML = header + content;
                     variablesList.appendChild(varElement);
                 });
+            }
+
+            getTypeLabel(type) {
+                const labels = {
+                    variable: 'Variable',
+                    unescaped: 'Unescaped Variable',
+                    section: 'Section',
+                    inverted: 'Inverted Section',
+                    partial: 'Partial',
+                    helper: 'Helper'
+                };
+                return labels[type] || type;
+            }
+
+            updateHelperArg(name, index, value) {
+                const variable = this.variables.get(name);
+                if (variable && variable.type === 'helper') {
+                    variable.arguments[index] = value;
+                }
+            }
+
+            updateSectionType(name, type) {
+                const variable = this.variables.get(name);
+                if (variable && (variable.type === 'section' || variable.type === 'inverted')) {
+                    variable.dataType = type;
+                }
             }
 
             updateVariableValue(name, value) {
@@ -262,12 +364,36 @@
                             name: this.currentTemplate.name || 'New Template',
                             type: this.currentTemplate.type || 'page',
                             variables: Array.from(this.variables.values())
-                                .filter(v => v.name && v.name.trim()) // Only include variables with names
-                                .map(v => ({
-                                    name: v.name.trim(),
-                                    default_value: v.defaultValue || '',
-                                    type: v.type || 'string'
-                                }))
+                                .filter(v => v.name && v.name.trim())
+                                .map(v => {
+                                    const base = {
+                                        name: v.name.trim(),
+                                        tag_type: v.type
+                                    };
+
+                                    switch (v.type) {
+                                        case 'helper':
+                                            return {
+                                                ...base,
+                                                helper_name: v.helperName,
+                                                arguments: v.arguments
+                                            };
+                                        case 'section':
+                                        case 'inverted':
+                                            return {
+                                                ...base,
+                                                data_type: v.dataType || 'array'
+                                            };
+                                        case 'partial':
+                                            return base;
+                                        default:
+                                            return {
+                                                ...base,
+                                                default_value: v.defaultValue || '',
+                                                data_type: v.dataType || 'string'
+                                            };
+                                    }
+                                })
                         }
                     };
 
@@ -343,11 +469,38 @@
                     // Get current template content and variables
                     const templateData = {
                         template: editor.getValue(),
-                        variables: Array.from(this.variables.values()).map(v => ({
-                            name: v.name,
-                            value: v.defaultValue,
-                            type: v.type
-                        }))
+                        variables: Array.from(this.variables.values()).map(v => {
+                            const base = {
+                                name: v.name,
+                                tag_type: v.type
+                            };
+
+                            switch (v.type) {
+                                case 'helper':
+                                    return {
+                                        ...base,
+                                        helper_name: v.helperName,
+                                        arguments: v.arguments.map(arg => arg.trim())
+                                    };
+                                case 'section':
+                                case 'inverted':
+                                    return {
+                                        ...base,
+                                        data_type: v.dataType || 'array',
+                                        value: v.dataType === 'boolean' ? false :
+                                               v.dataType === 'array' ? [] :
+                                               v.dataType === 'object' ? {} : null
+                                    };
+                                case 'partial':
+                                    return base;
+                                default:
+                                    return {
+                                        ...base,
+                                        value: v.defaultValue || '',
+                                        data_type: v.dataType || 'string'
+                                    };
+                            }
+                        })
                     };
                     console.log(templateData);
 
