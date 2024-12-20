@@ -16,7 +16,7 @@ class TemplateManagerController implements \App\ControllerInterface {
         $this->renderer = $renderer;
         $this->conn = $conn;
         $this->data = [
-            'title' => 'Template Manager',
+            'title' => 'Template Editor',
             'templates' => $this->getTemplates()
         ];
     }
@@ -110,10 +110,12 @@ class TemplateManagerController implements \App\ControllerInterface {
     public function saveTemplate(Request $request, Response $response) {
         $templateId = $request->param('id');
         $data = json_decode($request->body(), true);
-        $content = $data['content'];
+        $content = $data['template']['content'];
+        $name = $data['template']['name'];
+        $type = $data['template']['type'];
 
-        $stmt = $this->conn->prepare("UPDATE templates SET content = ? WHERE id = ?");
-        $stmt->execute([$content, $templateId]);
+        $stmt = $this->conn->prepare("UPDATE templates SET name = ?, content = ?, type = ?  WHERE id = ?");
+        $stmt->execute([$name, $content, $type, $templateId]);
 
         return $response->json(['success' => true]);
     }
