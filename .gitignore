@@ -12,3 +12,4 @@ app/CustomRoutes.php
 src/IcarusRoutes.php
 .phpunit.result.cache
 database/.env
+wipe.sh

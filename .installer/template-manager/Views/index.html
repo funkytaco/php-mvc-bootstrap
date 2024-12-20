@@ -97,7 +97,7 @@
                     name: 'New Template',
                     content: '',
                     type: 'page',
-                    variables: []
+                    variables: ['joe', 'doe']
                 };
                 this.variables = new Map();
                 this.setupEventListeners();
@@ -289,6 +289,7 @@
                             type: v.type
                         }))
                     };
+                    console.log(templateData);
 
                     // Send to preview endpoint
                     const response = await fetch('/template-manager/preview', {
