@@ -17,15 +17,29 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Navigation -->
             <header class="bg-white shadow">
-                <div class="px-4 py-3 flex justify-between items-center">
-                    <h1 class="text-2xl font-semibold text-gray-900">Template Manager</h1>
+                <div class="px-4 py-3">
+                    <div class="flex justify-between items-center mb-3">
+                        <h1 class="text-2xl font-semibold text-gray-900">Template Manager</h1>
+                        <div class="flex space-x-4">
+                            <button id="saveTemplate" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Save Changes
+                            </button>
+                            <button id="previewTemplate" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                                Preview
+                            </button>
+                        </div>
+                    </div>
                     <div class="flex space-x-4">
-                        <button id="saveTemplate" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                            Save Changes
-                        </button>
-                        <button id="previewTemplate" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
-                            Preview
-                        </button>
+                        <div class="flex-1">
+                            <input type="text" id="templateName" placeholder="Template Name" class="w-full border rounded px-3 py-1.5">
+                        </div>
+                        <div class="w-48">
+                            <select id="templateType" class="w-full border rounded px-3 py-1.5">
+                                <option value="page">Page</option>
+                                <option value="layout">Layout</option>
+                                <option value="partial">Partial</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -94,10 +108,10 @@
             constructor() {
                 this.currentTemplate = {
                     id: 'new',
-                    name: 'New Template',
+                    name: '',
                     content: '',
                     type: 'page',
-                    variables: ['joe', 'doe']
+                    variables: []
                 };
                 this.variables = new Map();
                 this.setupEventListeners();
@@ -105,6 +119,10 @@
 
                 // Set initial content in editor
                 editor.setValue('');
+                
+                // Initialize template name and type fields
+                document.getElementById('templateName').value = this.currentTemplate.name;
+                document.getElementById('templateType').value = this.currentTemplate.type;
             }
 
             setupCodeMirrorEvents() {
@@ -209,6 +227,14 @@
                 document.getElementById('previewTemplate').addEventListener('click', () => this.showPreview());
                 document.getElementById('closePreview').addEventListener('click', () => this.hidePreview());
                 document.getElementById('addVariable').addEventListener('click', () => this.addVariable());
+
+                // Template name and type change handlers
+                document.getElementById('templateName').addEventListener('input', (e) => {
+                    this.currentTemplate.name = e.target.value.trim();
+                });
+                document.getElementById('templateType').addEventListener('change', (e) => {
+                    this.currentTemplate.type = e.target.value;
+                });
             }
 
             async loadTemplate(id) {
@@ -218,6 +244,10 @@
                     this.currentTemplate = template;
                     editor.setValue(template.content);
                     this.loadVariables(template.variables);
+                    
+                    // Update template name and type inputs
+                    document.getElementById('templateName').value = template.name || '';
+                    document.getElementById('templateType').value = template.type || 'page';
                 } catch (error) {
                     console.error('Error loading template:', error);
                 }
@@ -276,9 +306,19 @@
             async showPreview() {
                 // Reset any previous error styling
                 const varInputs = document.querySelectorAll('#variablesList input[type="text"]:not([readonly])');
+                const templateNameInput = document.getElementById('templateName');
+                
                 varInputs.forEach(input => {
                     input.classList.remove('border-red-500', 'bg-red-50');
                 });
+                templateNameInput.classList.remove('border-red-500', 'bg-red-50');
+
+                // Validate template name
+                if (!templateNameInput.value.trim()) {
+                    templateNameInput.classList.add('border-red-500', 'bg-red-50');
+                    this.showNotification('Please provide a template name', 'error');
+                    return;
+                }
 
                 // Check for empty variable values
                 let hasEmptyValues = false;
