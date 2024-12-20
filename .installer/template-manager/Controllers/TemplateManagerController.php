@@ -40,10 +40,15 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function previewTemplate(Request $request, Response $response) {
-        //print_r($request->body()) returns {template: "<html>{{mustacheTag}}}</html>", variables: [{name: "joe", value: "JoeValue", type: "string"}]}
         $data = json_decode($request->body(), true);
-        $rendered = $this->renderer->renderString($data['template'], $data['variables']);
-        //print_r($rendered);exit;
+        
+        // Transform variables array into key-value pairs
+        $variables = [];
+        foreach ($data['variables'] as $var) {
+            $variables[$var['name']] = $var['value'];
+        }
+        
+        $rendered = $this->renderer->renderString($data['template'], $variables);
         return $response->json(['rendered' => $rendered]);
     }
 
