@@ -136,19 +136,50 @@
                 if (!variables) return;
                 
                 variables.forEach(variable => {
-                    this.variables.set(variable.name, {
+                    const base = {
                         name: variable.name,
-                        defaultValue: variable.default_value || '',
-                        type: variable.type || 'string'
-                    });
+                        type: variable.tag_type || 'variable',
+                        dataType: variable.data_type || 'string'
+                    };
+
+                    switch (variable.tag_type) {
+                        case 'helper':
+                            this.variables.set(variable.name, {
+                                ...base,
+                                helperName: variable.helper_name,
+                                arguments: variable.arguments || []
+                            });
+                            break;
+                            
+                        case 'section':
+                        case 'inverted':
+                            this.variables.set(variable.name, {
+                                ...base,
+                                defaultValue: ''
+                            });
+                            break;
+                            
+                        case 'partial':
+                            this.variables.set(variable.name, base);
+                            break;
+                            
+                        default:
+                            this.variables.set(variable.name, {
+                                ...base,
+                                defaultValue: variable.default_value || ''
+                            });
+                    }
                 });
                 
                 // Update variables panel with loaded variables
-                this.detectVariables(editor.getValue());
+                //twin removed this.detectVariables(editor.getValue());
+                this.updateVariablesPanel(this.variables);
             }
 
             detectVariables(content) {
-                const variables = new Map();
+                // Clear existing variables
+                //const variables = new Map(); replaced by this.variables.clear
+                this.variables.clear();
                 
                 // Match different types of Mustache tags
                 const patterns = {
@@ -174,7 +205,7 @@
                             const helperMatch = name.match(/(\w+)\((.*)\)/);
                             if (helperMatch) {
                                 const [_, helperName, args] = helperMatch;
-                                variables.set(name, {
+                                this.variables.set(name, {
                                     name,
                                     type: 'helper',
                                     helperName,
@@ -183,8 +214,8 @@
                             }
                             continue;
                         }
-                        
-                        variables.set(name, {
+                        //twin replaced variables.set with this.variables.set
+                        this.variables.set(name, {
                             name,
                             type,
                             defaultValue: '',
@@ -194,7 +225,7 @@
                 }
                 
                 // Update variables panel with the detected tags
-                this.updateVariablesPanel(variables);
+                this.updateVariablesPanel(this.variables);
             }
 
             updateVariablesPanel(variables) {
@@ -205,6 +236,7 @@
                 variables.forEach((variable, key) => {
                     const varElement = document.createElement('div');
                     varElement.className = 'flex flex-col space-y-2 mb-4 p-3 border rounded';
+                    varElement.setAttribute('data-var-id', key);
                     
                     // Common header for all types
                     let header = `
@@ -215,7 +247,7 @@
                         </div>
                     `;
                     
-                    let content = '';
+                    let content = '<div class="variable-content">';
                     
                     switch(variable.type) {
                         case 'helper':
@@ -275,6 +307,7 @@
                             `;
                     }
                     
+                    content += '</div>';
                     varElement.innerHTML = header + content;
                     variablesList.appendChild(varElement);
                 });
@@ -313,10 +346,136 @@
                 }
             }
 
-            updateVariableType(name, type) {
-                const variable = this.variables.get(name);
-                if (variable) {
-                    variable.type = type;
+            updateVariableType(id, type) {
+                const variable = this.variables.get(id);
+                if (!variable) return;
+
+                // Update variable type
+                variable.type = type;
+
+                // Reset variable properties based on new type
+                switch (type) {
+                    case 'helper':
+                        variable.helperName = '';
+                        variable.arguments = [];
+                        break;
+                    case 'section':
+                    case 'inverted':
+                        variable.dataType = 'array';
+                        delete variable.defaultValue;
+                        break;
+                    case 'partial':
+                        delete variable.defaultValue;
+                        delete variable.dataType;
+                        break;
+                    default:
+                        variable.defaultValue = '';
+                        variable.dataType = 'string';
+                }
+
+                // Update UI for the specific variable
+                const varElement = document.querySelector(`[data-var-id="${id}"]`);
+                if (!varElement) return;
+
+                let content = '';
+                switch (type) {
+                    case 'helper':
+                        content = `
+                            <div class="space-y-2">
+                                <input type="text" placeholder="Helper name" 
+                                       class="w-full border rounded px-2 py-1"
+                                       onchange="templateManager.updateHelperName('${id}', this.value)">
+                                <div id="helper-args-${id}" class="space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" placeholder="Argument" 
+                                               class="flex-1 border rounded px-2 py-1"
+                                               onchange="templateManager.updateHelperArg('${id}', 0, this.value)">
+                                    </div>
+                                </div>
+                                <button onclick="templateManager.addHelperArg('${id}')"
+                                        class="text-blue-600 hover:text-blue-700 text-sm">
+                                    + Add Argument
+                                </button>
+                            </div>
+                        `;
+                        break;
+                    case 'section':
+                    case 'inverted':
+                        content = `
+                            <select class="w-full border rounded px-2 py-1"
+                                    onchange="templateManager.updateDataType('${id}', this.value)">
+                                <option value="array">Array</option>
+                                <option value="boolean">Boolean</option>
+                                <option value="object">Object</option>
+                            </select>
+                        `;
+                        break;
+                    case 'partial':
+                        content = `
+                            <p class="text-sm text-gray-600">
+                                Partial template will be loaded during rendering
+                            </p>
+                        `;
+                        break;
+                    default:
+                        content = `
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="Default value" 
+                                       class="flex-1 border rounded px-2 py-1"
+                                       onchange="templateManager.updateVariableValue('${id}', this.value)">
+                                <select class="border rounded px-2 py-1"
+                                        onchange="templateManager.updateDataType('${id}', this.value)">
+                                    <option value="string">String</option>
+                                    <option value="number">Number</option>
+                                    <option value="boolean">Boolean</option>
+                                </select>
+                            </div>
+                        `;
+                }
+
+                const contentDiv = varElement.querySelector('.variable-content');
+                if (contentDiv) {
+                    contentDiv.innerHTML = content;
+                }
+            }
+
+            updateHelperName(id, name) {
+                const variable = this.variables.get(id);
+                if (variable && variable.type === 'helper') {
+                    variable.helperName = name;
+                }
+            }
+
+            addHelperArg(id) {
+                const variable = this.variables.get(id);
+                if (!variable || variable.type !== 'helper') return;
+
+                if (!variable.arguments) {
+                    variable.arguments = [];
+                }
+
+                const argIndex = variable.arguments.length;
+                variable.arguments.push('');
+
+                const argsContainer = document.getElementById(`helper-args-${id}`);
+                if (argsContainer) {
+                    const argElement = document.createElement('div');
+                    argElement.className = 'flex items-center space-x-2';
+                    argElement.innerHTML = `
+                        <input type="text" placeholder="Argument" 
+                               class="flex-1 border rounded px-2 py-1"
+                               onchange="templateManager.updateHelperArg('${id}', ${argIndex}, this.value)">
+                        <button onclick="this.parentElement.remove(); templateManager.removeHelperArg('${id}', ${argIndex})"
+                                class="text-red-600 hover:text-red-700 px-2">×</button>
+                    `;
+                    argsContainer.appendChild(argElement);
+                }
+            }
+
+            removeHelperArg(id, index) {
+                const variable = this.variables.get(id);
+                if (variable && variable.type === 'helper' && variable.arguments) {
+                    variable.arguments.splice(index, 1);
                 }
             }
 
@@ -536,19 +695,82 @@
                 const varId = `var_${Date.now()}`;
                 
                 const varElement = document.createElement('div');
-                varElement.className = 'flex items-center space-x-2';
-                varElement.innerHTML = `
-                    <input type="text" placeholder="Variable name" class="flex-1 border rounded px-2 py-1">
-                    <input type="text" placeholder="Default value" class="flex-1 border rounded px-2 py-1">
-                    <select class="border rounded px-2 py-1">
-                        <option value="string">String</option>
-                        <option value="number">Number</option>
-                        <option value="boolean">Boolean</option>
-                    </select>
-                    <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-700 px-2">×</button>
+                varElement.className = 'flex flex-col space-y-2 mb-4 p-3 border rounded';
+                varElement.setAttribute('data-var-id', varId);
+                
+                // Create variable with default settings
+                const variable = {
+                    name: '',
+                    type: 'variable',
+                    defaultValue: '',
+                    dataType: 'string'
+                };
+                
+                // Add to variables map
+                this.variables.set(varId, variable);
+                
+                // Common header with type selector
+                const header = `
+                    <div class="flex items-center justify-between mb-2">
+                        <select class="border rounded px-2 py-1" onchange="templateManager.updateVariableType('${varId}', this.value)">
+                            <option value="variable">Variable</option>
+                            <option value="helper">Helper</option>
+                            <option value="section">Section</option>
+                            <option value="inverted">Inverted Section</option>
+                            <option value="partial">Partial</option>
+                        </select>
+                        <button onclick="templateManager.deleteVariable('${varId}'); this.closest('.flex-col').remove();" 
+                                class="text-red-600 hover:text-red-700 px-2">×</button>
+                    </div>
+                    <input type="text" placeholder="Variable name" 
+                           class="w-full border rounded px-2 py-1 mb-2"
+                           onchange="templateManager.updateVariableName('${varId}', this.value)">
                 `;
                 
+                // Initial content for basic variable
+                const content = `
+                    <div class="variable-content">
+                        <div class="flex space-x-2">
+                            <input type="text" placeholder="Default value" 
+                                   class="flex-1 border rounded px-2 py-1"
+                                   onchange="templateManager.updateVariableValue('${varId}', this.value)">
+                            <select class="border rounded px-2 py-1"
+                                    onchange="templateManager.updateDataType('${varId}', this.value)">
+                                <option value="string">String</option>
+                                <option value="number">Number</option>
+                                <option value="boolean">Boolean</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                
+                varElement.innerHTML = header + content;
                 variablesList.appendChild(varElement);
+            }
+
+            updateVariableName(id, name) {
+                const variable = this.variables.get(id);
+                if (variable) {
+                    variable.name = name;
+                }
+            }
+
+            updateDataType(id, type) {
+                const variable = this.variables.get(id);
+                if (variable) {
+                    variable.dataType = type;
+                    // Convert default value based on new type
+                    switch (type) {
+                        case 'number':
+                            variable.defaultValue = isNaN(parseFloat(variable.defaultValue)) ? 0 : parseFloat(variable.defaultValue);
+                            break;
+                        case 'boolean':
+                            variable.defaultValue = Boolean(variable.defaultValue);
+                            break;
+                        default:
+                            variable.defaultValue = String(variable.defaultValue);
+                    }
+                }
             }
 
             showNotification(message, type = 'success') {

@@ -40,16 +40,71 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function previewTemplate(Request $request, Response $response) {
-        $data = json_decode($request->body(), true);
-        
-        // Transform variables array into key-value pairs
-        $variables = [];
-        foreach ($data['variables'] as $var) {
-            $variables[$var['name']] = $var['value'];
+        try {
+            $data = json_decode($request->body(), true);
+            //print_r($data);exit;
+            // Transform variables array into appropriate structure
+            $variables = [];
+            foreach ($data['variables'] as $var) {
+                $name = $var['name'];
+                
+                switch ($var['tag_type']) {
+                    case 'helper':
+                        // For helpers, we'll just show the function call structure
+                        $variables[$name] = "{{$var['helper_name']}(" . implode(', ', $var['arguments']) . ")}";
+                        break;
+                        
+                    case 'section':
+                        // For sections, use the appropriate data type
+                        switch ($var['data_type']) {
+                            case 'array':
+                                $variables[$name] = []; // Empty array for preview
+                                break;
+                            case 'boolean':
+                                $variables[$name] = false;
+                                break;
+                            case 'object':
+                                $variables[$name] = new \stdClass();
+                                break;
+                        }
+                        break;
+                        
+                    case 'inverted':
+                        // For inverted sections, use false or empty array
+                        $variables[$name] = $var['data_type'] === 'boolean' ? true : [];
+                        break;
+                        
+                    case 'partial':
+                        // For partials, try to load the partial template
+                        try {
+                            $variables[$name] = $this->renderer->renderPartial($name, []);
+                        } catch (\Exception $e) {
+                            $variables[$name] = "<!-- Partial '$name' not found -->";
+                        }
+                        break;
+                        
+                    default:
+                        // For basic variables, use the value or convert based on type
+                        $value = $var['value'] ?? '';
+                        switch ($var['data_type']) {
+                            case 'number':
+                                $variables[$name] = is_numeric($value) ? floatval($value) : 0;
+                                break;
+                            case 'boolean':
+                                $variables[$name] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                                break;
+                            default:
+                                $variables[$name] = (string)$value;
+                        }
+                }
+            }
+            $rendered = $this->renderer->renderString($data['template'], $variables);
+            return $response->json(['rendered' => $rendered]);
+        } catch (\Exception $e) {
+            return $response->json([
+                'error' => 'Preview error: ' . $e->getMessage()
+            ])->code(400);
         }
-        
-        $rendered = $this->renderer->renderString($data['template'], $variables);
-        return $response->json(['rendered' => $rendered]);
     }
 
     public function saveTemplate(Request $request, Response $response) {
