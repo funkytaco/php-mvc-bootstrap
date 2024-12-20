@@ -42,7 +42,6 @@ class TemplateManagerController implements \App\ControllerInterface {
     public function previewTemplate(Request $request, Response $response) {
         try {
             $data = json_decode($request->body(), true);
-            //print_r($data);exit;
             // Transform variables array into appropriate structure
             $variables = [];
             foreach ($data['variables'] as $var) {
@@ -195,17 +194,20 @@ class TemplateManagerController implements \App\ControllerInterface {
     private function getTemplateById(string $id): ?array {
         try {
             // Get template data
-            $sql = "SELECT t.*, GROUP_CONCAT(
-                        JSON_OBJECT(
+            $sql = "SELECT t.*,
+                array_to_json(
+                    array_agg(
+                        json_build_object(
                             'name', tv.name,
                             'default_value', tv.default_value,
                             'type', tv.type
                         )
-                    ) as variables
-                    FROM templates t
-                    LEFT JOIN template_variables tv ON t.id = tv.template_id
-                    WHERE t.id = ?
-                    GROUP BY t.id";
+                    )
+                ) as variables
+            FROM templates t
+            LEFT JOIN template_variables tv ON t.id = tv.template_id
+            WHERE t.id = ?
+            GROUP BY t.id";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$id]);
             $template = $stmt->fetch(\PDO::FETCH_ASSOC);
