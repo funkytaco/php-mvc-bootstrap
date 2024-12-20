@@ -124,7 +124,17 @@ class TemplateManagerController implements \App\ControllerInterface {
         $sql = "SELECT * FROM templates ORDER BY name ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Add type-based boolean flags for Mustache template
+        foreach ($templates as &$template) {
+            $template['isPage'] = $template['type'] === 'page';
+            $template['isLayout'] = $template['type'] === 'layout';
+            $template['isPartial'] = $template['type'] === 'partial';
+            // Set active state if needed (can be updated based on current template ID)
+            $template['active'] = false;
+        }
+        return $templates;
     }
 
     private function validateTemplate(array $data): void {
