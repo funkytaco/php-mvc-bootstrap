@@ -558,7 +558,7 @@
                     };
 
                     const isNew = !this.currentTemplate.id || this.currentTemplate.id === 'new';
-                    const url = isNew ? '/templates/new' : `/templates/${this.currentTemplate.id}`;
+                    const url = isNew ? '/api/templates/' : `/api/templates/id/${this.currentTemplate.id}`;
 
                     const response = await fetch(url, {
                         method: 'POST',
