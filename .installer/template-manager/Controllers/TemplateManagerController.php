@@ -107,16 +107,65 @@ class TemplateManagerController implements \App\ControllerInterface {
     }
 
     public function saveTemplate(Request $request, Response $response) {
-        $templateId = $request->param('id');
-        $data = json_decode($request->body(), true);
-        $content = $data['template']['content'];
-        $name = $data['template']['name'];
-        $type = $data['template']['type'];
-
-        $stmt = $this->conn->prepare("UPDATE templates SET name = ?, content = ?, type = ?  WHERE id = ?");
-        $stmt->execute([$name, $content, $type, $templateId]);
-
-        return $response->json(['success' => true]);
+        try {
+            $templateId = $request->param('id');
+            $data = json_decode($request->body(), true)['template'];
+            
+            $this->conn->beginTransaction();
+            
+            // Update template basic info
+            $stmt = $this->conn->prepare("UPDATE templates SET name = ?, content = ?, type = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$data['name'], $data['content'], $data['type'], $templateId]);
+            
+            // Delete existing variables
+            $stmt = $this->conn->prepare("DELETE FROM template_variables WHERE template_id = ?");
+            $stmt->execute([$templateId]);
+            
+            // Insert new variables if they exist
+            if (!empty($data['variables'])) {
+                $stmt = $this->conn->prepare("INSERT INTO template_variables (id, template_id, name, default_value, tag_type, data_type, helper_name, arguments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                
+                foreach ($data['variables'] as $variable) {
+                    $defaultValue = null;
+                    $helperName = null;
+                    $arguments = null;
+                    
+                    switch ($variable['tag_type']) {
+                        case 'helper':
+                            $helperName = $variable['helper_name'];
+                            $arguments = json_encode($variable['arguments']);
+                            break;
+                        case 'section':
+                        case 'inverted':
+                            break;
+                        case 'partial':
+                            break;
+                        default:
+                            $defaultValue = $variable['default_value'] ?? null;
+                    }
+                    
+                    $stmt->execute([
+                        $this->generateUUID(),
+                        $templateId,
+                        $variable['name'],
+                        $defaultValue,
+                        $variable['tag_type'],
+                        $variable['data_type'] ?? null,
+                        $helperName,
+                        $arguments
+                    ]);
+                }
+            }
+            
+            $this->conn->commit();
+            return $response->json(['success' => true]);
+            
+        } catch (\Exception $e) {
+            $this->conn->rollBack();
+            return $response->json([
+                'error' => 'Failed to save template: ' . $e->getMessage()
+            ])->code(500);
+        }
     }
 
     private function getTemplates(): array {
@@ -195,14 +244,20 @@ class TemplateManagerController implements \App\ControllerInterface {
         try {
             // Get template data
             $sql = "SELECT t.*,
-                array_to_json(
-                    array_agg(
-                        json_build_object(
-                            'name', tv.name,
-                            'default_value', tv.default_value,
-                            'type', tv.type
-                        )
-                    )
+                COALESCE(
+                    array_to_json(
+                        array_agg(
+                            json_build_object(
+                                'name', tv.name,
+                                'default_value', tv.default_value,
+                                'tag_type', tv.tag_type,
+                                'data_type', tv.data_type,
+                                'helper_name', tv.helper_name,
+                                'arguments', tv.arguments::json
+                            )
+                        ) FILTER (WHERE tv.name IS NOT NULL)
+                    ),
+                    '[]'
                 ) as variables
             FROM templates t
             LEFT JOIN template_variables tv ON t.id = tv.template_id
@@ -217,14 +272,7 @@ class TemplateManagerController implements \App\ControllerInterface {
             }
 
             // Parse variables JSON
-            if ($template['variables']) {
-                $template['variables'] = array_map(
-                    fn($var) => json_decode($var, true),
-                    explode(',', $template['variables'])
-                );
-            } else {
-                $template['variables'] = [];
-            }
+            $template['variables'] = json_decode($template['variables'], true) ?: [];
 
             return $template;
         } catch (\Exception $e) {

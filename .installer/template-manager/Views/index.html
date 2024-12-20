@@ -503,7 +503,6 @@
                     const response = await fetch(`/api/templates/id/${id}`);
                     const template = await response.json();
                     this.currentTemplate = template;
-                    console.log(template);
                     
                     // Update template name and type inputs first
                     document.getElementById('templateName').value = template.name || '';
