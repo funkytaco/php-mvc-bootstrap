@@ -177,9 +177,11 @@
             }
 
             detectVariables(content) {
-                // Clear existing variables
-                //const variables = new Map(); replaced by this.variables.clear
-                this.variables.clear();
+                // Store existing variables in a temporary map
+                const existingVars = new Map(this.variables);
+                
+                // Create a set to track variables found in the template
+                const foundVars = new Set();
                 
                 // Match different types of Mustache tags
                 const patterns = {
@@ -214,17 +216,31 @@
                             }
                             continue;
                         }
-                        //twin replaced variables.set with this.variables.set
-                        this.variables.set(name, {
-                            name,
-                            type,
-                            defaultValue: '',
-                            dataType: 'string'
-                        });
+                        foundVars.add(name);
+                        
+                        // If variable already exists, keep it
+                        if (existingVars.has(name)) {
+                            this.variables.set(name, existingVars.get(name));
+                        } else {
+                            // Only create new variable if it doesn't exist
+                            this.variables.set(name, {
+                                name,
+                                type,
+                                defaultValue: '',
+                                dataType: 'string'
+                            });
+                        }
                     }
                 }
                 
-                // Update variables panel with the detected tags
+                // Remove variables that are no longer in the template
+                for (const [name, _] of existingVars) {
+                    if (!foundVars.has(name)) {
+                        this.variables.delete(name);
+                    }
+                }
+                
+                // Update variables panel with the current variables
                 this.updateVariablesPanel(this.variables);
             }
 
