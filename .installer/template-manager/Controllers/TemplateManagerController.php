@@ -76,7 +76,8 @@ class TemplateManagerController implements \App\ControllerInterface {
                     case 'partial':
                         // For partials, try to load the partial template
                         try {
-                            $variables[$name] = $this->renderer->renderPartial($name, []);
+                            //$variables[$name] = $this->renderer->renderPartial($name, []);
+                            $variables[$name] = $this->renderer->renderString($name, []);
                         } catch (\Exception $e) {
                             $variables[$name] = "<!-- Partial '$name' not found -->";
                         }
